@@ -55,7 +55,8 @@ class Interpreter:
                 )
 
             for _ in range(count):
-                self.execute(node.body)
+                for statement in node.body:
+                    self.execute(statement)
 
             return
 

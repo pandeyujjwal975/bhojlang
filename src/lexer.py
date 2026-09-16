@@ -16,6 +16,7 @@ class Lexer:
         "agar": "AGAR",
         "nahi": "NAHI",
         "dohrav": "DOHRAV",
+        "ant": "ANT",
     }
 
     OPERATORS = {
@@ -42,8 +43,14 @@ class Lexer:
         while self.position < len(self.text):
             char = self.text[self.position]
 
-            # Ignore spaces and newlines
-            if char.isspace():
+            # Newline
+            if char == "\n":
+                tokens.append(Token("NEWLINE"))
+                self.position += 1
+                continue
+
+            # Ignore spaces and tabs
+            if char in " \t\r":
                 self.position += 1
                 continue
 
@@ -156,4 +163,3 @@ class Lexer:
             token_type,
             word
         )
-

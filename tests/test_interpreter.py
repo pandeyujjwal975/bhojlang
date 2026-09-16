@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, call
 
 from src.lexer import Lexer
 from src.parser import Parser
@@ -378,7 +378,32 @@ class TestInterpreter(unittest.TestCase):
             )
 
             mock_print.assert_any_call("BhojLang")
+    def test_dohrav_block(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                """
+                dohrav 3
+                    likha "Ram Ram"
+                    likha "BhojLang"
+                ant
+                """
+            )
 
+            self.assertEqual(
+                mock_print.call_count,
+                6
+            )
+
+            expected = [
+                call("Ram Ram"),
+                call("BhojLang"),
+                call("Ram Ram"),
+                call("BhojLang"),
+                call("Ram Ram"),
+                call("BhojLang"),
+            ]
+
+            mock_print.assert_has_calls(expected)
     
 if __name__ == "__main__":
     unittest.main()

@@ -88,8 +88,11 @@ class Parser:
     def parse(self):
         nodes = []
 
+        self.skip_newlines()
+
         while not self.is_at_end():
             nodes.append(self.parse_statement())
+            self.skip_newlines()
 
         return nodes
 
@@ -157,6 +160,8 @@ class Parser:
 
         body = self.parse_print()
 
+        self.skip_newlines()
+
         else_body = None
 
         if self.current().type == "NAHI":
@@ -180,24 +185,54 @@ class Parser:
 
         count = self.parse_expression()
 
-        if self.current().type != "LIKHA":
-            raise SyntaxError(
-                "dohrav ke baad likha command chahi."
+        # Old single-line syntax:
+        # dohrav 3 likha "Hello"
+        if self.current().type == "LIKHA":
+            body = [self.parse_print()]
+
+            return DohravNode(
+                count,
+                body
             )
 
-        body = self.parse_print()
+        # New multi-line block syntax:
+        #
+        # dohrav 3
+        #     likha "Hello"
+        #     likha "BhojLang"
+        # ant
+
+        if self.current().type != "NEWLINE":
+            raise SyntaxError(
+                "dohrav ke baad 'likha' ya new line chahi."
+            )
+
+        self.skip_newlines()
+
+        body = []
+
+        while (
+            not self.is_at_end()
+            and self.current().type != "ANT"
+        ):
+            body.append(self.parse_statement())
+            self.skip_newlines()
+
+        if self.is_at_end():
+            raise SyntaxError(
+                "dohrav ke liye 'ant' chahi."
+            )
+
+        self.advance()
 
         return DohravNode(
             count,
             body
         )
 
-    # expression
-    # Comparison has lower precedence than arithmetic
     def parse_expression(self):
         return self.parse_comparison()
 
-    # Handles comparison operators
     def parse_comparison(self):
         left = self.parse_addition()
 
@@ -220,7 +255,6 @@ class Parser:
 
         return left
 
-    # Handles + and -
     def parse_addition(self):
         left = self.parse_multiplication()
 
@@ -239,7 +273,6 @@ class Parser:
 
         return left
 
-    # Handles * and /
     def parse_multiplication(self):
         left = self.parse_primary()
 
@@ -258,7 +291,6 @@ class Parser:
 
         return left
 
-    # Handles numbers, strings and variables
     def parse_primary(self):
         token = self.current()
 
@@ -277,6 +309,10 @@ class Parser:
         raise SyntaxError(
             f"Ee value samajh mein na aail: {token.value!r}"
         )
+
+    def skip_newlines(self):
+        while self.current().type == "NEWLINE":
+            self.advance()
 
     def current(self):
         return self.tokens[self.position]
