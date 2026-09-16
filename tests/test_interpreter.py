@@ -350,6 +350,35 @@ class TestInterpreter(unittest.TestCase):
                 "Minor"
             )
 
+    def test_dohrav(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                'dohrav 3 likha "Ram Ram"'
+            )
 
+            self.assertEqual(
+                mock_print.call_count,
+                3
+            )
+
+            mock_print.assert_any_call("Ram Ram")
+
+    def test_dohrav_with_variable(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                """
+                bata baar = 2
+                dohrav baar likha "BhojLang"
+                """
+            )
+
+            self.assertEqual(
+                mock_print.call_count,
+                2
+            )
+
+            mock_print.assert_any_call("BhojLang")
+
+    
 if __name__ == "__main__":
     unittest.main()

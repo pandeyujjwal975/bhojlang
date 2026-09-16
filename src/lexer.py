@@ -15,6 +15,7 @@ class Lexer:
         "bata": "BATA",
         "agar": "AGAR",
         "nahi": "NAHI",
+        "dohrav": "DOHRAV",
     }
 
     OPERATORS = {
@@ -155,3 +156,4 @@ class Lexer:
             token_type,
             word
         )
+

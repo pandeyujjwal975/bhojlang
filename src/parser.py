@@ -68,6 +68,18 @@ class IfNode:
         )
 
 
+class DohravNode:
+    def __init__(self, count, body):
+        self.count = count
+        self.body = body
+
+    def __repr__(self):
+        return (
+            f"DohravNode({self.count!r}, "
+            f"{self.body!r})"
+        )
+
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -92,6 +104,9 @@ class Parser:
 
         if token.type == "AGAR":
             return self.parse_if()
+
+        if token.type == "DOHRAV":
+            return self.parse_dohrav()
 
         raise SyntaxError(
             f"Ee command samajh mein na aail: {token.value!r}"
@@ -158,6 +173,23 @@ class Parser:
             condition,
             body,
             else_body
+        )
+
+    def parse_dohrav(self):
+        self.advance()
+
+        count = self.parse_expression()
+
+        if self.current().type != "LIKHA":
+            raise SyntaxError(
+                "dohrav ke baad likha command chahi."
+            )
+
+        body = self.parse_print()
+
+        return DohravNode(
+            count,
+            body
         )
 
     # expression

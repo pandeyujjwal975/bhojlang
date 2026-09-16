@@ -6,6 +6,7 @@ from src.parser import (
     VariableDeclarationNode,
     PrintNode,
     IfNode,
+    DohravNode,
 )
 
 
@@ -37,6 +38,24 @@ class Interpreter:
 
             elif node.else_body is not None:
                 self.execute(node.else_body)
+
+            return
+
+        if isinstance(node, DohravNode):
+            count = self.evaluate(node.count)
+
+            if not isinstance(count, int):
+                raise RuntimeError(
+                    "dohrav ke liye count integer hona chahi."
+                )
+
+            if count < 0:
+                raise RuntimeError(
+                    "dohrav ke liye count negative nahi ho sakta."
+                )
+
+            for _ in range(count):
+                self.execute(node.body)
 
             return
 
