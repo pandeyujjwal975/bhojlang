@@ -12,6 +12,7 @@ class Token:
 class Lexer:
     KEYWORDS = {
         "likha": "LIKHA",
+        "bata": "BATA",
     }
 
     def __init__(self, text):
@@ -34,14 +35,29 @@ class Lexer:
                 tokens.append(self.read_string())
                 continue
 
+            # Number
+            if char.isdigit():
+                tokens.append(self.read_number())
+                continue
+
             # Word / keyword
             if char.isalpha() or char == "_":
                 tokens.append(self.read_word())
                 continue
 
-            raise SyntaxError(
-                f"Anjaan character: {char!r}"
-            )
+            # Equals
+            if char == "=":
+                tokens.append(Token("EQUALS", "="))
+                self.position += 1
+                continue
+
+            # Plus
+            if char == "+":
+                tokens.append(Token("PLUS", "+"))
+                self.position += 1
+                continue
+
+            raise SyntaxError(f"Anjaan character: {char!r}")
 
         tokens.append(Token("EOF"))
         return tokens
@@ -63,6 +79,19 @@ class Lexer:
         self.position += 1
 
         return Token("STRING", value)
+
+    def read_number(self):
+        start = self.position
+
+        while (
+            self.position < len(self.text)
+            and self.text[self.position].isdigit()
+        ):
+            self.position += 1
+
+        value = self.text[start:self.position]
+
+        return Token("NUMBER", int(value))
 
     def read_word(self):
         start = self.position
