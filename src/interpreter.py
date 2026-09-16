@@ -60,6 +60,26 @@ class Interpreter:
         left = self.evaluate(node.left)
         right = self.evaluate(node.right)
 
+        # Comparison operators
+        if node.operator == ">":
+            return left > right
+
+        if node.operator == "<":
+            return left < right
+
+        if node.operator == "==":
+            return left == right
+
+        if node.operator == "!=":
+            return left != right
+
+        if node.operator == ">=":
+            return left >= right
+
+        if node.operator == "<=":
+            return left <= right
+
+        # Arithmetic operators require numbers
         if not isinstance(left, (int, float)):
             raise RuntimeError(
                 "Arithmetic mein pahila value number chahi."

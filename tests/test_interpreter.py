@@ -111,9 +111,7 @@ class TestInterpreter(unittest.TestCase):
         self.assertEqual(result, 2.0)
 
     def test_operator_precedence(self):
-        interpreter = run_bhojlang(
-            ""
-        )
+        interpreter = run_bhojlang("")
 
         nodes = Parser(
             Lexer("likha 10 + 5 * 2").tokenize()
@@ -126,9 +124,7 @@ class TestInterpreter(unittest.TestCase):
         self.assertEqual(result, 20)
 
     def test_division_by_zero(self):
-        interpreter = run_bhojlang(
-            ""
-        )
+        interpreter = run_bhojlang("")
 
         nodes = Parser(
             Lexer("likha 10 / 0").tokenize()
@@ -183,6 +179,112 @@ class TestInterpreter(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             interpreter.run()
+
+    def test_greater_than(self):
+        interpreter = run_bhojlang("")
+
+        nodes = Parser(
+            Lexer("likha 10 > 5").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertTrue(result)
+
+    def test_less_than(self):
+        interpreter = run_bhojlang("")
+
+        nodes = Parser(
+            Lexer("likha 10 < 5").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertFalse(result)
+
+    def test_equal_equal(self):
+        interpreter = run_bhojlang("")
+
+        nodes = Parser(
+            Lexer("likha 10 == 10").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertTrue(result)
+
+    def test_not_equal(self):
+        interpreter = run_bhojlang("")
+
+        nodes = Parser(
+            Lexer("likha 10 != 5").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertTrue(result)
+
+    def test_greater_equal(self):
+        interpreter = run_bhojlang("")
+
+        nodes = Parser(
+            Lexer("likha 10 >= 10").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertTrue(result)
+
+    def test_less_equal(self):
+        interpreter = run_bhojlang("")
+
+        nodes = Parser(
+            Lexer("likha 10 <= 10").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertTrue(result)
+
+    def test_comparison_with_variables(self):
+        interpreter = run_bhojlang(
+            """
+            bata umar = 20
+            """
+        )
+
+        nodes = Parser(
+            Lexer("likha umar >= 18").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertTrue(result)
+
+    def test_print_comparison(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                """
+                bata umar = 20
+                likha umar >= 18
+                """
+            )
+
+            mock_print.assert_called_once_with(True)
 
 
 if __name__ == "__main__":

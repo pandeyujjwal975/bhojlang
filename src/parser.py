@@ -115,15 +115,41 @@ class Parser:
         return PrintNode(value)
 
     # expression
-    # + and - have lower precedence than * and /
+    # Comparison has lower precedence than arithmetic
     def parse_expression(self):
-        return self.parse_addition()
+        return self.parse_comparison()
+
+    # Handles comparison operators
+    def parse_comparison(self):
+        left = self.parse_addition()
+
+        while self.current().type in (
+            "GREATER",
+            "LESS",
+            "EQUAL_EQUAL",
+            "NOT_EQUAL",
+            "GREATER_EQUAL",
+            "LESS_EQUAL",
+        ):
+            operator = self.advance()
+            right = self.parse_addition()
+
+            left = BinaryNode(
+                left,
+                operator.value,
+                right
+            )
+
+        return left
 
     # Handles + and -
     def parse_addition(self):
         left = self.parse_multiplication()
 
-        while self.current().type in ("PLUS", "MINUS"):
+        while self.current().type in (
+            "PLUS",
+            "MINUS"
+        ):
             operator = self.advance()
             right = self.parse_multiplication()
 
@@ -139,7 +165,10 @@ class Parser:
     def parse_multiplication(self):
         left = self.parse_primary()
 
-        while self.current().type in ("MULTIPLY", "DIVIDE"):
+        while self.current().type in (
+            "MULTIPLY",
+            "DIVIDE"
+        ):
             operator = self.advance()
             right = self.parse_primary()
 

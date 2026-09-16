@@ -1,0 +1,6 @@
+likha 10 > 5
+likha 10 < 5
+likha 10 == 10
+likha 10 != 5
+likha 10 >= 10
+likha 10 <= 10
