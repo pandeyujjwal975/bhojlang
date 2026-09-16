@@ -4,6 +4,7 @@ from src.parser import (
     VariableNode,
     BinaryNode,
     VariableDeclarationNode,
+    AssignmentNode,
     PrintNode,
     IfNode,
     DohravNode,
@@ -22,6 +23,16 @@ class Interpreter:
 
     def execute(self, node):
         if isinstance(node, VariableDeclarationNode):
+            value = self.evaluate(node.value)
+            self.variables[node.name] = value
+            return
+
+        if isinstance(node, AssignmentNode):
+            if node.name not in self.variables:
+                raise RuntimeError(
+                    f"Variable {node.name!r} define nahi bhail ba."
+                )
+
             value = self.evaluate(node.value)
             self.variables[node.name] = value
             return

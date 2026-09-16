@@ -47,6 +47,18 @@ class VariableDeclarationNode:
         )
 
 
+class AssignmentNode:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def __repr__(self):
+        return (
+            f"AssignmentNode("
+            f"{self.name!r}, {self.value!r})"
+        )
+
+
 class PrintNode:
     def __init__(self, value):
         self.value = value
@@ -126,6 +138,9 @@ class Parser:
         if token.type == "JABTAK":
             return self.parse_jabtak()
 
+        if token.type == "IDENTIFIER":
+            return self.parse_assignment()
+
         raise SyntaxError(
             f"Ee command samajh mein na aail: {token.value!r}"
         )
@@ -152,6 +167,25 @@ class Parser:
         value = self.parse_expression()
 
         return VariableDeclarationNode(
+            name.value,
+            value
+        )
+
+    def parse_assignment(self):
+        name = self.current()
+
+        self.advance()
+
+        if self.current().type != "EQUALS":
+            raise SyntaxError(
+                "Assignment mein '=' chahi."
+            )
+
+        self.advance()
+
+        value = self.parse_expression()
+
+        return AssignmentNode(
             name.value,
             value
         )
@@ -200,8 +234,6 @@ class Parser:
 
         count = self.parse_expression()
 
-        # Old single-line syntax:
-        # dohrav 3 likha "Hello"
         if self.current().type == "LIKHA":
             body = [self.parse_print()]
 
@@ -209,13 +241,6 @@ class Parser:
                 count,
                 body
             )
-
-        # Multi-line block syntax:
-        #
-        # dohrav 3
-        #     likha "Hello"
-        #     likha "BhojLang"
-        # ant
 
         if self.current().type != "NEWLINE":
             raise SyntaxError(

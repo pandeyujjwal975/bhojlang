@@ -431,5 +431,17 @@ class TestInterpreter(unittest.TestCase):
             )
 
             mock_print.assert_has_calls(expected)    
+    def test_variable_assignment(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                """
+                bata i = 10
+                i = 20
+                likha i
+                """
+            )
+
+            mock_print.assert_called_once_with(20)
+
 if __name__ == "__main__":
     unittest.main()
