@@ -29,7 +29,8 @@ class Interpreter:
             return
 
         raise RuntimeError(
-            f"Ee AST node samajh mein na aail: {type(node).__name__}"
+            f"Ee AST node samajh mein na aail: "
+            f"{type(node).__name__}"
         )
 
     def evaluate(self, node):
@@ -59,19 +60,34 @@ class Interpreter:
         left = self.evaluate(node.left)
         right = self.evaluate(node.right)
 
+        if not isinstance(left, (int, float)):
+            raise RuntimeError(
+                "Arithmetic mein pahila value number chahi."
+            )
+
+        if not isinstance(right, (int, float)):
+            raise RuntimeError(
+                "Arithmetic mein dusra value number chahi."
+            )
+
         if node.operator == "+":
-            if not isinstance(left, (int, float)):
-                raise RuntimeError(
-                    "Addition mein pahila value number chahi."
-                )
-
-            if not isinstance(right, (int, float)):
-                raise RuntimeError(
-                    "Addition mein dusra value number chahi."
-                )
-
             return left + right
 
+        if node.operator == "-":
+            return left - right
+
+        if node.operator == "*":
+            return left * right
+
+        if node.operator == "/":
+            if right == 0:
+                raise RuntimeError(
+                    "Zero se divide nahi kar sakat bani."
+                )
+
+            return left / right
+
         raise RuntimeError(
-            f"Ee operator abhi supported nahi ba: {node.operator!r}"
+            f"Ee operator abhi supported nahi ba: "
+            f"{node.operator!r}"
         )

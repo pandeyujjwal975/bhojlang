@@ -50,10 +50,94 @@ class TestInterpreter(unittest.TestCase):
             Lexer("likha a + b").tokenize()
         ).parse()
 
-        expression = nodes[0].value
-        result = interpreter.evaluate(expression)
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
 
         self.assertEqual(result, 30)
+
+    def test_subtraction(self):
+        interpreter = run_bhojlang(
+            """
+            bata a = 10
+            bata b = 5
+            """
+        )
+
+        nodes = Parser(
+            Lexer("likha a - b").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertEqual(result, 5)
+
+    def test_multiplication(self):
+        interpreter = run_bhojlang(
+            """
+            bata a = 10
+            bata b = 5
+            """
+        )
+
+        nodes = Parser(
+            Lexer("likha a * b").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertEqual(result, 50)
+
+    def test_division(self):
+        interpreter = run_bhojlang(
+            """
+            bata a = 10
+            bata b = 5
+            """
+        )
+
+        nodes = Parser(
+            Lexer("likha a / b").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertEqual(result, 2.0)
+
+    def test_operator_precedence(self):
+        interpreter = run_bhojlang(
+            ""
+        )
+
+        nodes = Parser(
+            Lexer("likha 10 + 5 * 2").tokenize()
+        ).parse()
+
+        result = interpreter.evaluate(
+            nodes[0].value
+        )
+
+        self.assertEqual(result, 20)
+
+    def test_division_by_zero(self):
+        interpreter = run_bhojlang(
+            ""
+        )
+
+        nodes = Parser(
+            Lexer("likha 10 / 0").tokenize()
+        ).parse()
+
+        with self.assertRaises(RuntimeError):
+            interpreter.evaluate(
+                nodes[0].value
+            )
 
     def test_print_string(self):
         with patch("builtins.print") as mock_print:

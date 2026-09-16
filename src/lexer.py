@@ -15,6 +15,14 @@ class Lexer:
         "bata": "BATA",
     }
 
+    OPERATORS = {
+        "=": "EQUALS",
+        "+": "PLUS",
+        "-": "MINUS",
+        "*": "MULTIPLY",
+        "/": "DIVIDE",
+    }
+
     def __init__(self, text):
         self.text = text
         self.position = 0
@@ -45,21 +53,23 @@ class Lexer:
                 tokens.append(self.read_word())
                 continue
 
-            # Equals
-            if char == "=":
-                tokens.append(Token("EQUALS", "="))
+            # Operators
+            if char in self.OPERATORS:
+                tokens.append(
+                    Token(
+                        self.OPERATORS[char],
+                        char
+                    )
+                )
                 self.position += 1
                 continue
 
-            # Plus
-            if char == "+":
-                tokens.append(Token("PLUS", "+"))
-                self.position += 1
-                continue
-
-            raise SyntaxError(f"Anjaan character: {char!r}")
+            raise SyntaxError(
+                f"Anjaan character: {char!r}"
+            )
 
         tokens.append(Token("EOF"))
+
         return tokens
 
     def read_string(self):
@@ -73,9 +83,12 @@ class Lexer:
             self.position += 1
 
         if self.position >= len(self.text):
-            raise SyntaxError("String band na bhail ba.")
+            raise SyntaxError(
+                "String band na bhail ba."
+            )
 
         value = self.text[start:self.position]
+
         self.position += 1
 
         return Token("STRING", value)
@@ -91,7 +104,10 @@ class Lexer:
 
         value = self.text[start:self.position]
 
-        return Token("NUMBER", int(value))
+        return Token(
+            "NUMBER",
+            int(value)
+        )
 
     def read_word(self):
         start = self.position
@@ -107,6 +123,12 @@ class Lexer:
 
         word = self.text[start:self.position]
 
-        token_type = self.KEYWORDS.get(word, "IDENTIFIER")
+        token_type = self.KEYWORDS.get(
+            word,
+            "IDENTIFIER"
+        )
 
-        return Token(token_type, word)
+        return Token(
+            token_type,
+            word
+        )

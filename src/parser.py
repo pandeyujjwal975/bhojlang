@@ -41,7 +41,10 @@ class VariableDeclarationNode:
         self.value = value
 
     def __repr__(self):
-        return f"VariableDeclarationNode({self.name!r}, {self.value!r})"
+        return (
+            f"VariableDeclarationNode("
+            f"{self.name!r}, {self.value!r})"
+        )
 
 
 class PrintNode:
@@ -99,7 +102,10 @@ class Parser:
 
         value = self.parse_expression()
 
-        return VariableDeclarationNode(name.value, value)
+        return VariableDeclarationNode(
+            name.value,
+            value
+        )
 
     def parse_print(self):
         self.advance()
@@ -108,10 +114,32 @@ class Parser:
 
         return PrintNode(value)
 
+    # expression
+    # + and - have lower precedence than * and /
     def parse_expression(self):
+        return self.parse_addition()
+
+    # Handles + and -
+    def parse_addition(self):
+        left = self.parse_multiplication()
+
+        while self.current().type in ("PLUS", "MINUS"):
+            operator = self.advance()
+            right = self.parse_multiplication()
+
+            left = BinaryNode(
+                left,
+                operator.value,
+                right
+            )
+
+        return left
+
+    # Handles * and /
+    def parse_multiplication(self):
         left = self.parse_primary()
 
-        while self.current().type == "PLUS":
+        while self.current().type in ("MULTIPLY", "DIVIDE"):
             operator = self.advance()
             right = self.parse_primary()
 
@@ -123,6 +151,7 @@ class Parser:
 
         return left
 
+    # Handles numbers, strings and variables
     def parse_primary(self):
         token = self.current()
 
