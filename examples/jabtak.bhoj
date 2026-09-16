@@ -1,0 +1,6 @@
+bata i = 1
+
+jabtak i <= 5
+    likha i
+    bata i = i + 1
+ant

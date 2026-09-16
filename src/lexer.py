@@ -17,6 +17,7 @@ class Lexer:
         "nahi": "NAHI",
         "dohrav": "DOHRAV",
         "ant": "ANT",
+"jabtak": "JABTAK",
     }
 
     OPERATORS = {

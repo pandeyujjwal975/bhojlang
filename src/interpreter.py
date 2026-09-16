@@ -7,6 +7,7 @@ from src.parser import (
     PrintNode,
     IfNode,
     DohravNode,
+    JabtakNode,
 )
 
 
@@ -60,6 +61,13 @@ class Interpreter:
 
             return
 
+        if isinstance(node, JabtakNode):
+            while self.evaluate(node.condition):
+                for statement in node.body:
+                    self.execute(statement)
+
+            return
+
         raise RuntimeError(
             f"Ee AST node samajh mein na aail: "
             f"{type(node).__name__}"
@@ -92,7 +100,6 @@ class Interpreter:
         left = self.evaluate(node.left)
         right = self.evaluate(node.right)
 
-        # Comparison operators
         if node.operator == ">":
             return left > right
 
@@ -111,7 +118,6 @@ class Interpreter:
         if node.operator == "<=":
             return left <= right
 
-        # Arithmetic operators require numbers
         if not isinstance(left, (int, float)):
             raise RuntimeError(
                 "Arithmetic mein pahila value number chahi."

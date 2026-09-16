@@ -404,6 +404,32 @@ class TestInterpreter(unittest.TestCase):
             ]
 
             mock_print.assert_has_calls(expected)
-    
+    def test_jabtak(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                """
+                bata i = 1
+
+                jabtak i <= 5
+                    likha i
+                    bata i = i + 1
+                ant
+                """
+            )
+
+            expected = [
+                call(1),
+                call(2),
+                call(3),
+                call(4),
+                call(5),
+            ]
+
+            self.assertEqual(
+                mock_print.call_count,
+                5
+            )
+
+            mock_print.assert_has_calls(expected)    
 if __name__ == "__main__":
     unittest.main()

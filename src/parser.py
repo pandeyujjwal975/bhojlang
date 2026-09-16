@@ -80,6 +80,18 @@ class DohravNode:
         )
 
 
+class JabtakNode:
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body
+
+    def __repr__(self):
+        return (
+            f"JabtakNode({self.condition!r}, "
+            f"{self.body!r})"
+        )
+
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -110,6 +122,9 @@ class Parser:
 
         if token.type == "DOHRAV":
             return self.parse_dohrav()
+
+        if token.type == "JABTAK":
+            return self.parse_jabtak()
 
         raise SyntaxError(
             f"Ee command samajh mein na aail: {token.value!r}"
@@ -195,7 +210,7 @@ class Parser:
                 body
             )
 
-        # New multi-line block syntax:
+        # Multi-line block syntax:
         #
         # dohrav 3
         #     likha "Hello"
@@ -227,6 +242,39 @@ class Parser:
 
         return DohravNode(
             count,
+            body
+        )
+
+    def parse_jabtak(self):
+        self.advance()
+
+        condition = self.parse_expression()
+
+        if self.current().type != "NEWLINE":
+            raise SyntaxError(
+                "jabtak ke baad new line chahi."
+            )
+
+        self.skip_newlines()
+
+        body = []
+
+        while (
+            not self.is_at_end()
+            and self.current().type != "ANT"
+        ):
+            body.append(self.parse_statement())
+            self.skip_newlines()
+
+        if self.is_at_end():
+            raise SyntaxError(
+                "jabtak ke liye 'ant' chahi."
+            )
+
+        self.advance()
+
+        return JabtakNode(
+            condition,
             body
         )
 
