@@ -1,0 +1,3 @@
+bata umar = 20
+
+agar umar >= 18 likha "Adult" nahi likha "Minor"

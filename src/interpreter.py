@@ -35,6 +35,9 @@ class Interpreter:
             if condition:
                 self.execute(node.body)
 
+            elif node.else_body is not None:
+                self.execute(node.else_body)
+
             return
 
         raise RuntimeError(

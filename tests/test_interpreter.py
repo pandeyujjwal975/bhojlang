@@ -316,5 +316,40 @@ class TestInterpreter(unittest.TestCase):
             mock_print.assert_called_once_with(
                 "Adult"
             )
+
+    def test_if_else_true(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                'agar 10 > 5 likha "Adult" nahi likha "Minor"'
+            )
+
+            mock_print.assert_called_once_with(
+                "Adult"
+            )
+
+    def test_if_else_false(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                'agar 10 < 5 likha "Adult" nahi likha "Minor"'
+            )
+
+            mock_print.assert_called_once_with(
+                "Minor"
+            )
+
+    def test_if_else_with_variable(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                """
+                bata umar = 16
+                agar umar >= 18 likha "Adult" nahi likha "Minor"
+                """
+            )
+
+            mock_print.assert_called_once_with(
+                "Minor"
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

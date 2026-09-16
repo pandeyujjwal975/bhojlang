@@ -56,14 +56,15 @@ class PrintNode:
 
 
 class IfNode:
-    def __init__(self, condition, body):
+    def __init__(self, condition, body, else_body=None):
         self.condition = condition
         self.body = body
+        self.else_body = else_body
 
     def __repr__(self):
         return (
             f"IfNode({self.condition!r}, "
-            f"{self.body!r})"
+            f"{self.body!r}, {self.else_body!r})"
         )
 
 
@@ -141,9 +142,22 @@ class Parser:
 
         body = self.parse_print()
 
+        else_body = None
+
+        if self.current().type == "NAHI":
+            self.advance()
+
+            if self.current().type != "LIKHA":
+                raise SyntaxError(
+                    "nahi ke baad likha command chahi."
+                )
+
+            else_body = self.parse_print()
+
         return IfNode(
             condition,
-            body
+            body,
+            else_body
         )
 
     # expression
