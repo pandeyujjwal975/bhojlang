@@ -5,6 +5,7 @@ from src.parser import (
     BinaryNode,
     VariableDeclarationNode,
     PrintNode,
+    IfNode,
 )
 
 
@@ -26,6 +27,14 @@ class Interpreter:
         if isinstance(node, PrintNode):
             value = self.evaluate(node.value)
             print(value)
+            return
+
+        if isinstance(node, IfNode):
+            condition = self.evaluate(node.condition)
+
+            if condition:
+                self.execute(node.body)
+
             return
 
         raise RuntimeError(

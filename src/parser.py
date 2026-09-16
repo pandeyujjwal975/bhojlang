@@ -55,6 +55,18 @@ class PrintNode:
         return f"PrintNode({self.value!r})"
 
 
+class IfNode:
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body
+
+    def __repr__(self):
+        return (
+            f"IfNode({self.condition!r}, "
+            f"{self.body!r})"
+        )
+
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -76,6 +88,9 @@ class Parser:
 
         if token.type == "LIKHA":
             return self.parse_print()
+
+        if token.type == "AGAR":
+            return self.parse_if()
 
         raise SyntaxError(
             f"Ee command samajh mein na aail: {token.value!r}"
@@ -113,6 +128,23 @@ class Parser:
         value = self.parse_expression()
 
         return PrintNode(value)
+
+    def parse_if(self):
+        self.advance()
+
+        condition = self.parse_expression()
+
+        if self.current().type != "LIKHA":
+            raise SyntaxError(
+                "agar ke baad likha command chahi."
+            )
+
+        body = self.parse_print()
+
+        return IfNode(
+            condition,
+            body
+        )
 
     # expression
     # Comparison has lower precedence than arithmetic
