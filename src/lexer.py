@@ -13,6 +13,8 @@ class Lexer:
     KEYWORDS = {
         "likha": "LIKHA",
         "bata": "BATA",
+        "agar": "AGAR",
+        "nahi": "NAHI",
     }
 
     OPERATORS = {
@@ -21,6 +23,12 @@ class Lexer:
         "-": "MINUS",
         "*": "MULTIPLY",
         "/": "DIVIDE",
+        ">": "GREATER",
+        "<": "LESS",
+        "==": "EQUAL_EQUAL",
+        "!=": "NOT_EQUAL",
+        ">=": "GREATER_EQUAL",
+        "<=": "LESS_EQUAL",
     }
 
     def __init__(self, text):
@@ -53,7 +61,22 @@ class Lexer:
                 tokens.append(self.read_word())
                 continue
 
-            # Operators
+            # Two-character operators
+            two_char = self.text[
+                self.position:self.position + 2
+            ]
+
+            if two_char in self.OPERATORS:
+                tokens.append(
+                    Token(
+                        self.OPERATORS[two_char],
+                        two_char
+                    )
+                )
+                self.position += 2
+                continue
+
+            # One-character operators
             if char in self.OPERATORS:
                 tokens.append(
                     Token(

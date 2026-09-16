@@ -7,12 +7,19 @@ class TestLexer(unittest.TestCase):
 
     def test_keywords(self):
         tokens = Lexer(
-            'likha bata'
+            'likha bata agar nahi'
         ).tokenize()
 
-        self.assertEqual(tokens[0].type, "LIKHA")
-        self.assertEqual(tokens[1].type, "BATA")
-        self.assertEqual(tokens[2].type, "EOF")
+        self.assertEqual(
+            [token.type for token in tokens],
+            [
+                "LIKHA",
+                "BATA",
+                "AGAR",
+                "NAHI",
+                "EOF",
+            ]
+        )
 
     def test_string(self):
         tokens = Lexer(
@@ -26,17 +33,13 @@ class TestLexer(unittest.TestCase):
         )
 
     def test_number(self):
-        tokens = Lexer(
-            "123"
-        ).tokenize()
+        tokens = Lexer("123").tokenize()
 
         self.assertEqual(tokens[0].type, "NUMBER")
         self.assertEqual(tokens[0].value, 123)
 
     def test_identifier(self):
-        tokens = Lexer(
-            "naam"
-        ).tokenize()
+        tokens = Lexer("naam").tokenize()
 
         self.assertEqual(
             tokens[0].type,
@@ -84,10 +87,33 @@ class TestLexer(unittest.TestCase):
             ]
         )
 
-    def test_underscore_identifier(self):
+    def test_comparison_operators(self):
         tokens = Lexer(
-            "user_name"
+            "10 > 5 < 20 == 10 != 7 >= 5 <= 20"
         ).tokenize()
+
+        self.assertEqual(
+            [token.type for token in tokens],
+            [
+                "NUMBER",
+                "GREATER",
+                "NUMBER",
+                "LESS",
+                "NUMBER",
+                "EQUAL_EQUAL",
+                "NUMBER",
+                "NOT_EQUAL",
+                "NUMBER",
+                "GREATER_EQUAL",
+                "NUMBER",
+                "LESS_EQUAL",
+                "NUMBER",
+                "EOF",
+            ]
+        )
+
+    def test_underscore_identifier(self):
+        tokens = Lexer("user_name").tokenize()
 
         self.assertEqual(
             tokens[0].type,
@@ -100,9 +126,7 @@ class TestLexer(unittest.TestCase):
 
     def test_unknown_character(self):
         with self.assertRaises(SyntaxError):
-            Lexer(
-                "10 @ 5"
-            ).tokenize()
+            Lexer("10 @ 5").tokenize()
 
 
 if __name__ == "__main__":
