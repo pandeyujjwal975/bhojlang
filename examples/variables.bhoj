@@ -1,2 +1,9 @@
 bata naam = "Ujjwal"
+likha naam
+
 bata umar = 20
+likha umar
+
+bata a = 10
+bata b = 20
+likha a + b
