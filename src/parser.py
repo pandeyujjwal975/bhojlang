@@ -111,20 +111,33 @@ class JabtakNode:
 
 
 class FunctionNode:
-    def __init__(self, name, body):
+    def __init__(self, name, parameters, body):
         self.name = name
+        self.parameters = parameters
         self.body = body
 
     def __repr__(self):
-        return f"FunctionNode({self.name!r}, {self.body!r})"
+        return (
+            f"FunctionNode("
+            f"{self.name!r}, "
+            f"{self.parameters!r}, "
+            f"{self.body!r}"
+            f")"
+        )
 
 
 class CallNode:
-    def __init__(self, name):
+    def __init__(self, name, arguments):
         self.name = name
+        self.arguments = arguments
 
     def __repr__(self):
-        return f"CallNode({self.name!r})"
+        return (
+            f"CallNode("
+            f"{self.name!r}, "
+            f"{self.arguments!r}"
+            f")"
+        )
 
 
 class Parser:
@@ -331,6 +344,20 @@ class Parser:
         name = self.expect("IDENTIFIER").value
 
         self.expect("LPAREN")
+
+        parameters = []
+
+        if self.current().type != "RPAREN":
+            while True:
+                parameters.append(
+                    self.expect("IDENTIFIER").value
+                )
+
+                if self.current().type != "COMMA":
+                    break
+
+                self.advance()
+
         self.expect("RPAREN")
 
         self.skip_newlines()
@@ -338,6 +365,11 @@ class Parser:
         body = []
 
         while self.current().type != "ANT":
+            if self.current().type == "EOF":
+                raise SyntaxError(
+                    "kaam ke block ke ant mein 'ant' chahi."
+                )
+
             body.append(self.parse_statement())
             self.skip_newlines()
 
@@ -345,6 +377,7 @@ class Parser:
 
         return FunctionNode(
             name,
+            parameters,
             body
         )
 
@@ -352,9 +385,26 @@ class Parser:
         name = self.expect("IDENTIFIER").value
 
         self.expect("LPAREN")
+
+        arguments = []
+
+        if self.current().type != "RPAREN":
+            while True:
+                arguments.append(
+                    self.parse_expression()
+                )
+
+                if self.current().type != "COMMA":
+                    break
+
+                self.advance()
+
         self.expect("RPAREN")
 
-        return CallNode(name)
+        return CallNode(
+            name,
+            arguments
+        )
 
     def parse_expression(self):
         return self.parse_ya()

@@ -40,6 +40,7 @@ class Lexer:
         "<=": "LESS_EQUAL",
         "(": "LPAREN",
         ")": "RPAREN",
+        ",": "COMMA",
     }
 
     def __init__(self, text):

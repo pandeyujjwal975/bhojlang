@@ -48,8 +48,26 @@ class Interpreter:
 
             function = self.functions[node.name]
 
-            for statement in function.body:
-                self.execute(statement)
+            if len(node.arguments) != len(function.parameters):
+                raise RuntimeError(
+                    f"Function {node.name!r} ke "
+                    f"{len(function.parameters)} argument chahi, "
+                    f"lekin {len(node.arguments)} milal."
+                )
+
+            old_variables = self.variables.copy()
+
+            for parameter, argument in zip(
+                function.parameters,
+                node.arguments
+            ):
+                self.variables[parameter] = self.evaluate(argument)
+
+            try:
+                for statement in function.body:
+                    self.execute(statement)
+            finally:
+                self.variables = old_variables
 
             return
 

@@ -512,5 +512,58 @@ unknown()
             run_bhojlang(source)
 
 
+    def test_function_with_parameter(self):
+        source = """
+kaam greet(naam)
+    likha naam
+ant
+
+greet("Ujjwal")
+"""
+
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(source)
+
+        mock_print.assert_called_once_with("Ujjwal")
+
+
+    def test_function_with_multiple_parameters(self):
+        source = """
+kaam show(naam, age)
+    likha naam
+    likha age
+ant
+
+show("Ujjwal", 20)
+"""
+
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(source)
+
+        self.assertEqual(
+            mock_print.call_args_list,
+            [
+                call("Ujjwal"),
+                call(20),
+            ]
+        )
+
+
+    def test_function_wrong_argument_count(self):
+        source = """
+kaam greet(naam)
+    likha naam
+ant
+
+greet()
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'greet' ke 1 argument chahi, lekin 0 milal."
+        ):
+            run_bhojlang(source)
+
+
 if __name__ == "__main__":
     unittest.main()
