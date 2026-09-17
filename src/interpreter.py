@@ -25,12 +25,25 @@ class Interpreter:
     def __init__(self, nodes):
         self.nodes = nodes
         self.variables = {}
+        self.scopes = [self.variables]
         self.functions = {}
 
         # Function declarations register karo.
         for node in self.nodes:
             if isinstance(node, FunctionNode):
                 self.functions[node.name] = node
+
+    def push_scope(self):
+        scope = {}
+        self.scopes.append(scope)
+        self.variables = scope
+
+    def pop_scope(self):
+        if len(self.scopes) <= 1:
+            raise RuntimeError("Global scope ke bahar nahi ja sakat bani.")
+
+        self.scopes.pop()
+        self.variables = self.scopes[-1]
 
     def run(self):
         for node in self.nodes:
@@ -55,13 +68,18 @@ class Interpreter:
                     f"lekin {len(node.arguments)} milal."
                 )
 
-            old_variables = self.variables.copy()
+            arguments = [
+                self.evaluate(argument)
+                for argument in node.arguments
+            ]
+
+            self.push_scope()
 
             for parameter, argument in zip(
                 function.parameters,
-                node.arguments
+                arguments
             ):
-                self.variables[parameter] = self.evaluate(argument)
+                self.variables[parameter] = argument
 
             try:
                 for statement in function.body:
@@ -69,7 +87,7 @@ class Interpreter:
             except ReturnSignal as signal:
                 return signal.value
             finally:
-                self.variables = old_variables
+                self.pop_scope()
 
             return
 

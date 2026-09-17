@@ -614,6 +614,18 @@ likha result
         interpreter = run_bhojlang(source)
         self.assertEqual(interpreter.variables["result"], 20)
 
+    def test_function_local_variable_scope(self):
+        source = """
+kaam test()
+    bata secret = 123
+ant
+
+test()
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertNotIn("secret", interpreter.variables)
+
     def test_function_wrong_argument_count(self):
         source = """
 kaam greet(naam)
