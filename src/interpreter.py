@@ -118,10 +118,18 @@ class Interpreter:
             condition = self.evaluate(node.condition)
 
             if condition:
-                self.execute(node.body)
+                if isinstance(node.body, list):
+                    for statement in node.body:
+                        self.execute(statement)
+                else:
+                    self.execute(node.body)
 
             elif node.else_body is not None:
-                self.execute(node.else_body)
+                if isinstance(node.else_body, list):
+                    for statement in node.else_body:
+                        self.execute(statement)
+                else:
+                    self.execute(node.else_body)
 
             return
 

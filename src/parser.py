@@ -271,6 +271,49 @@ class Parser:
 
         condition = self.parse_expression()
 
+        # Block syntax:
+        # agar condition
+        #     statement
+        # ant
+        if self.current().type == "NEWLINE":
+            self.advance()
+            self.skip_newlines()
+
+            body = []
+
+            while self.current().type not in ("ANT", "EOF"):
+                body.append(self.parse_statement())
+                self.skip_newlines()
+
+            self.expect("ANT")
+
+            else_body = None
+
+            if self.current().type == "NAHI":
+                self.advance()
+                self.skip_newlines()
+
+                if self.current().type == "NEWLINE":
+                    self.advance()
+                    self.skip_newlines()
+
+                else_body = []
+
+                while self.current().type not in ("ANT", "EOF"):
+                    else_body.append(self.parse_statement())
+                    self.skip_newlines()
+
+                self.expect("ANT")
+
+            return IfNode(
+                condition,
+                body,
+                else_body
+            )
+
+        # Existing one-line syntax:
+        # agar condition likha expression
+        # nahi likha expression
         self.expect("LIKHA")
 
         body = PrintNode(

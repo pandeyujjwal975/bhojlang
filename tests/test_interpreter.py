@@ -317,6 +317,19 @@ class TestInterpreter(unittest.TestCase):
                 "Adult"
             )
 
+    def test_if_block(self):
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(
+                """
+                bata umar = 20
+                agar umar >= 18
+                    likha "Adult"
+                ant
+                """
+            )
+
+            mock_print.assert_called_once_with("Adult")
+
     def test_if_else_true(self):
         with patch("builtins.print") as mock_print:
             run_bhojlang(
@@ -613,6 +626,21 @@ likha result
 """
         interpreter = run_bhojlang(source)
         self.assertEqual(interpreter.variables["result"], 20)
+
+    def test_recursive_function(self):
+        source = """
+kaam factorial(n)
+    agar n == 0
+        laut 1
+    ant
+
+    laut n * factorial(n - 1)
+ant
+
+bata result = factorial(5)
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], 120)
 
     def test_function_local_variable_scope(self):
         source = """
