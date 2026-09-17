@@ -670,5 +670,31 @@ greet()
             run_bhojlang(source)
 
 
+    def test_block_if(self):
+        source = """
+bata result = 0
+
+agar 10 > 5
+    bata result = 42
+ant
+
+likha result
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], 42)
+
+    def test_block_if_false(self):
+        source = """
+bata result = 10
+
+agar 5 > 10
+    bata result = 99
+ant
+
+likha result
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], 10)
+
 if __name__ == "__main__":
     unittest.main()
