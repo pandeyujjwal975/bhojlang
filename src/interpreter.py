@@ -31,12 +31,6 @@ class Interpreter:
         for node in self.nodes:
             if isinstance(node, FunctionNode):
                 self.functions[node.name] = node
-        self.functions = {}
-
-        # Function declarations register karo.
-        for node in self.nodes:
-            if isinstance(node, FunctionNode):
-                self.functions[node.name] = node
 
     def run(self):
         for node in self.nodes:

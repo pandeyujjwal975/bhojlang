@@ -598,6 +598,22 @@ likha result
         interpreter = run_bhojlang(source)
         self.assertEqual(interpreter.variables["result"], 60)
 
+    def test_nested_function_calls(self):
+        source = """
+kaam double(x)
+    laut x * 2
+ant
+
+kaam quad(x)
+    laut double(double(x))
+ant
+
+bata result = quad(5)
+likha result
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], 20)
+
     def test_function_wrong_argument_count(self):
         source = """
 kaam greet(naam)
