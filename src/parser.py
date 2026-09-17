@@ -14,6 +14,14 @@ class StringNode:
         return f"StringNode({self.value!r})"
 
 
+class BooleanNode:
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f"BooleanNode({self.value})"
+
+
 class VariableNode:
     def __init__(self, name):
         self.name = name
@@ -30,8 +38,10 @@ class BinaryNode:
 
     def __repr__(self):
         return (
-            f"BinaryNode({self.left!r}, "
-            f"{self.operator!r}, {self.right!r})"
+            f"BinaryNode("
+            f"{self.left!r}, "
+            f"{self.operator!r}, "
+            f"{self.right!r})"
         )
 
 
@@ -75,8 +85,10 @@ class IfNode:
 
     def __repr__(self):
         return (
-            f"IfNode({self.condition!r}, "
-            f"{self.body!r}, {self.else_body!r})"
+            f"IfNode("
+            f"{self.condition!r}, "
+            f"{self.body!r}, "
+            f"{self.else_body!r})"
         )
 
 
@@ -86,10 +98,7 @@ class DohravNode:
         self.body = body
 
     def __repr__(self):
-        return (
-            f"DohravNode({self.count!r}, "
-            f"{self.body!r})"
-        )
+        return f"DohravNode({self.count!r}, {self.body!r})"
 
 
 class JabtakNode:
@@ -98,10 +107,24 @@ class JabtakNode:
         self.body = body
 
     def __repr__(self):
-        return (
-            f"JabtakNode({self.condition!r}, "
-            f"{self.body!r})"
-        )
+        return f"JabtakNode({self.condition!r}, {self.body!r})"
+
+
+class FunctionNode:
+    def __init__(self, name, body):
+        self.name = name
+        self.body = body
+
+    def __repr__(self):
+        return f"FunctionNode({self.name!r}, {self.body!r})"
+
+
+class CallNode:
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"CallNode({self.name!r})"
 
 
 class Parser:
@@ -109,12 +132,39 @@ class Parser:
         self.tokens = tokens
         self.position = 0
 
+    def current(self):
+        return self.tokens[self.position]
+
+    def advance(self):
+        token = self.current()
+
+        if self.position < len(self.tokens) - 1:
+            self.position += 1
+
+        return token
+
+    def expect(self, token_type):
+        token = self.current()
+
+        if token.type != token_type:
+            raise SyntaxError(
+                f"Umeed {token_type} rahal, "
+                f"lekin {token.type} milal."
+            )
+
+        self.advance()
+        return token
+
+    def skip_newlines(self):
+        while self.current().type == "NEWLINE":
+            self.advance()
+
     def parse(self):
         nodes = []
 
         self.skip_newlines()
 
-        while not self.is_at_end():
+        while self.current().type != "EOF":
             nodes.append(self.parse_statement())
             self.skip_newlines()
 
@@ -138,90 +188,76 @@ class Parser:
         if token.type == "JABTAK":
             return self.parse_jabtak()
 
+        if token.type == "KAAM":
+            return self.parse_function()
+
         if token.type == "IDENTIFIER":
+            if (
+                self.position + 1 < len(self.tokens)
+                and self.tokens[self.position + 1].type == "LPAREN"
+            ):
+                return self.parse_call()
+
             return self.parse_assignment()
 
         raise SyntaxError(
-            f"Ee command samajh mein na aail: {token.value!r}"
+            f"Anjaan statement: {token.type}"
         )
 
     def parse_variable_declaration(self):
-        self.advance()
+        self.expect("BATA")
 
-        name = self.current()
+        name = self.expect("IDENTIFIER").value
 
-        if name.type != "IDENTIFIER":
-            raise SyntaxError(
-                "bata ke baad valid variable naam chahi."
-            )
-
-        self.advance()
-
-        if self.current().type != "EQUALS":
-            raise SyntaxError(
-                "Variable declaration mein '=' chahi."
-            )
-
-        self.advance()
+        self.expect("EQUALS")
 
         value = self.parse_expression()
 
         return VariableDeclarationNode(
-            name.value,
+            name,
             value
         )
 
     def parse_assignment(self):
-        name = self.current()
+        name = self.expect("IDENTIFIER").value
 
-        self.advance()
-
-        if self.current().type != "EQUALS":
-            raise SyntaxError(
-                "Assignment mein '=' chahi."
-            )
-
-        self.advance()
+        self.expect("EQUALS")
 
         value = self.parse_expression()
 
         return AssignmentNode(
-            name.value,
+            name,
             value
         )
 
     def parse_print(self):
-        self.advance()
+        self.expect("LIKHA")
 
         value = self.parse_expression()
 
         return PrintNode(value)
 
     def parse_if(self):
-        self.advance()
+        self.expect("AGAR")
 
         condition = self.parse_expression()
 
-        if self.current().type != "LIKHA":
-            raise SyntaxError(
-                "agar ke baad likha command chahi."
-            )
+        self.expect("LIKHA")
 
-        body = self.parse_print()
-
-        self.skip_newlines()
+        body = PrintNode(
+            self.parse_expression()
+        )
 
         else_body = None
 
         if self.current().type == "NAHI":
             self.advance()
 
-            if self.current().type != "LIKHA":
-                raise SyntaxError(
-                    "nahi ke baad likha command chahi."
-                )
+            self.expect("LIKHA")
 
-            else_body = self.parse_print()
+            else_body = PrintNode(
+                self.parse_expression()
+            )
 
         return IfNode(
             condition,
@@ -230,40 +266,39 @@ class Parser:
         )
 
     def parse_dohrav(self):
-        self.advance()
+        self.expect("DOHRAV")
 
         count = self.parse_expression()
 
+        # Single-line loop:
+        # dohrav 3 likha "Ram Ram"
         if self.current().type == "LIKHA":
-            body = [self.parse_print()]
+            body = self.parse_statement()
 
             return DohravNode(
                 count,
-                body
+                [body]
             )
 
-        if self.current().type != "NEWLINE":
-            raise SyntaxError(
-                "dohrav ke baad 'likha' ya new line chahi."
-            )
+        # Block loop:
+        # dohrav 3
+        #     likha "Ram Ram"
+        # ant
 
         self.skip_newlines()
 
         body = []
 
-        while (
-            not self.is_at_end()
-            and self.current().type != "ANT"
-        ):
+        while self.current().type != "ANT":
+            if self.current().type == "EOF":
+                raise SyntaxError(
+                    "dohrav ke block ke ant mein 'ant' chahi."
+                )
+
             body.append(self.parse_statement())
             self.skip_newlines()
 
-        if self.is_at_end():
-            raise SyntaxError(
-                "dohrav ke liye 'ant' chahi."
-            )
-
-        self.advance()
+        self.expect("ANT")
 
         return DohravNode(
             count,
@@ -271,52 +306,100 @@ class Parser:
         )
 
     def parse_jabtak(self):
-        self.advance()
+        self.expect("JABTAK")
 
         condition = self.parse_expression()
-
-        if self.current().type != "NEWLINE":
-            raise SyntaxError(
-                "jabtak ke baad new line chahi."
-            )
 
         self.skip_newlines()
 
         body = []
 
-        while (
-            not self.is_at_end()
-            and self.current().type != "ANT"
-        ):
+        while self.current().type != "ANT":
             body.append(self.parse_statement())
             self.skip_newlines()
 
-        if self.is_at_end():
-            raise SyntaxError(
-                "jabtak ke liye 'ant' chahi."
-            )
-
-        self.advance()
+        self.expect("ANT")
 
         return JabtakNode(
             condition,
             body
         )
 
+    def parse_function(self):
+        self.expect("KAAM")
+
+        name = self.expect("IDENTIFIER").value
+
+        self.expect("LPAREN")
+        self.expect("RPAREN")
+
+        self.skip_newlines()
+
+        body = []
+
+        while self.current().type != "ANT":
+            body.append(self.parse_statement())
+            self.skip_newlines()
+
+        self.expect("ANT")
+
+        return FunctionNode(
+            name,
+            body
+        )
+
+    def parse_call(self):
+        name = self.expect("IDENTIFIER").value
+
+        self.expect("LPAREN")
+        self.expect("RPAREN")
+
+        return CallNode(name)
+
     def parse_expression(self):
-        return self.parse_comparison()
+        return self.parse_ya()
+
+    def parse_ya(self):
+        left = self.parse_aur()
+
+        while self.current().type == "YA":
+            operator = self.advance()
+            right = self.parse_aur()
+
+            left = BinaryNode(
+                left,
+                operator.value,
+                right
+            )
+
+        return left
+
+    def parse_aur(self):
+        left = self.parse_comparison()
+
+        while self.current().type == "AUR":
+            operator = self.advance()
+            right = self.parse_comparison()
+
+            left = BinaryNode(
+                left,
+                operator.value,
+                right
+            )
+
+        return left
 
     def parse_comparison(self):
         left = self.parse_addition()
 
-        while self.current().type in (
+        while self.current().type in {
             "GREATER",
             "LESS",
-            "EQUAL_EQUAL",
-            "NOT_EQUAL",
             "GREATER_EQUAL",
             "LESS_EQUAL",
-        ):
+            "EQUAL_EQUAL",
+            "NOT_EQUAL",
+        }:
             operator = self.advance()
             right = self.parse_addition()
 
@@ -331,10 +414,10 @@ class Parser:
     def parse_addition(self):
         left = self.parse_multiplication()
 
-        while self.current().type in (
+        while self.current().type in {
             "PLUS",
-            "MINUS"
-        ):
+            "MINUS",
+        }:
             operator = self.advance()
             right = self.parse_multiplication()
 
@@ -349,10 +432,10 @@ class Parser:
     def parse_multiplication(self):
         left = self.parse_primary()
 
-        while self.current().type in (
+        while self.current().type in {
             "MULTIPLY",
-            "DIVIDE"
-        ):
+            "DIVIDE",
+        }:
             operator = self.advance()
             right = self.parse_primary()
 
@@ -375,25 +458,25 @@ class Parser:
             self.advance()
             return StringNode(token.value)
 
+        if token.type == "SACH":
+            self.advance()
+            return BooleanNode(True)
+
+        if token.type == "JHOOTH":
+            self.advance()
+            return BooleanNode(False)
+
         if token.type == "IDENTIFIER":
             self.advance()
+
+            if self.current().type == "LPAREN":
+                self.advance()
+                self.expect("RPAREN")
+
+                return CallNode(token.value)
+
             return VariableNode(token.value)
 
         raise SyntaxError(
-            f"Ee value samajh mein na aail: {token.value!r}"
+            f"Anjaan expression: {token.type}"
         )
-
-    def skip_newlines(self):
-        while self.current().type == "NEWLINE":
-            self.advance()
-
-    def current(self):
-        return self.tokens[self.position]
-
-    def advance(self):
-        token = self.tokens[self.position]
-        self.position += 1
-        return token
-
-    def is_at_end(self):
-        return self.current().type == "EOF"
