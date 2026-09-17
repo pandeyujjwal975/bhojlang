@@ -1,6 +1,7 @@
 from src.parser import (
     NumberNode,
     StringNode,
+    BooleanNode,
     VariableNode,
     BinaryNode,
     VariableDeclarationNode,
@@ -9,6 +10,8 @@ from src.parser import (
     IfNode,
     DohravNode,
     JabtakNode,
+    FunctionNode,
+    CallNode,
 )
 
 
@@ -16,12 +19,40 @@ class Interpreter:
     def __init__(self, nodes):
         self.nodes = nodes
         self.variables = {}
+        self.functions = {}
+
+        # Function declarations register karo.
+        for node in self.nodes:
+            if isinstance(node, FunctionNode):
+                self.functions[node.name] = node
+        self.functions = {}
+
+        # Function declarations register karo.
+        for node in self.nodes:
+            if isinstance(node, FunctionNode):
+                self.functions[node.name] = node
 
     def run(self):
         for node in self.nodes:
             self.execute(node)
 
     def execute(self, node):
+        if isinstance(node, FunctionNode):
+            return
+
+        if isinstance(node, CallNode):
+            if node.name not in self.functions:
+                raise RuntimeError(
+                    f"Function {node.name!r} define nahi bhail ba."
+                )
+
+            function = self.functions[node.name]
+
+            for statement in function.body:
+                self.execute(statement)
+
+            return
+
         if isinstance(node, VariableDeclarationNode):
             value = self.evaluate(node.value)
             self.variables[node.name] = value
@@ -89,6 +120,9 @@ class Interpreter:
             return node.value
 
         if isinstance(node, StringNode):
+            return node.value
+
+        if isinstance(node, BooleanNode):
             return node.value
 
         if isinstance(node, VariableNode):

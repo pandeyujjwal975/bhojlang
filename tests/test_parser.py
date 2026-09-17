@@ -102,6 +102,56 @@ class TestParser(unittest.TestCase):
             comparison.right.value,
             12
         )
+    def test_logical_and(self):
+        lexer = Lexer("likha sach aur jhooth")
+        tokens = lexer.tokenize()
+
+        nodes = Parser(tokens).parse()
+
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].value.operator, "aur")
+
+    def test_logical_or(self):
+        lexer = Lexer("likha sach ya jhooth")
+        tokens = lexer.tokenize()
+
+        nodes = Parser(tokens).parse()
+
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].value.operator, "ya")
+
+    def test_logical_precedence(self):
+        lexer = Lexer("likha sach ya sach aur jhooth")
+        tokens = lexer.tokenize()
+
+        nodes = Parser(tokens).parse()
+
+        root = nodes[0].value
+
+        self.assertEqual(root.operator, "ya")
+        self.assertEqual(root.right.operator, "aur")
+
+
+    def test_function_declaration(self):
+        lexer = Lexer("""
+kaam greet()
+    likha "Ram Ram!"
+ant
+""")
+        tokens = lexer.tokenize()
+        nodes = Parser(tokens).parse()
+
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].name, "greet")
+        self.assertEqual(len(nodes[0].body), 1)
+
+    def test_function_call(self):
+        lexer = Lexer("greet()")
+        tokens = lexer.tokenize()
+        nodes = Parser(tokens).parse()
+
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].name, "greet")
 
 
 if __name__ == "__main__":

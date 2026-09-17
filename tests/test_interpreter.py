@@ -443,5 +443,74 @@ class TestInterpreter(unittest.TestCase):
 
             mock_print.assert_called_once_with(20)
 
+    def test_boolean_values(self):
+        source = """
+bata active = sach
+bata banned = jhooth
+likha active
+likha banned
+"""
+
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(source)
+
+        self.assertEqual(
+            mock_print.call_args_list,
+            [
+                call(True),
+                call(False),
+            ]
+        )
+
+
+    def test_function_declaration_and_call(self):
+        source = """
+kaam greet()
+    likha "Ram Ram!"
+ant
+
+greet()
+"""
+
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(source)
+
+        mock_print.assert_called_once_with("Ram Ram!")
+
+
+    def test_multiple_function_calls(self):
+        source = """
+kaam greet()
+    likha "Ram Ram!"
+ant
+
+greet()
+greet()
+"""
+
+        with patch("builtins.print") as mock_print:
+            run_bhojlang(source)
+
+        self.assertEqual(
+            mock_print.call_args_list,
+            [
+                call("Ram Ram!"),
+                call("Ram Ram!"),
+            ]
+        )
+
+
+    def test_undefined_function(self):
+        source = """
+unknown()
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'unknown' define nahi bhail ba."
+        ):
+            run_bhojlang(source)
+
+
 if __name__ == "__main__":
     unittest.main()
