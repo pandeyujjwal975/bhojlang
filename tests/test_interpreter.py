@@ -549,6 +549,55 @@ show("Ujjwal", 20)
         )
 
 
+    def test_function_return_value(self):
+        source = """
+kaam jod(a, b)
+    laut a + b
+ant
+
+bata result = jod(10, 20)
+likha result
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], 30)
+
+    def test_function_return_string(self):
+        source = """
+kaam greet(naam)
+    laut naam
+ant
+
+bata result = greet("Ujjwal")
+likha result
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], "Ujjwal")
+
+    def test_function_early_return(self):
+        source = """
+kaam test()
+    laut 42
+    likha 999
+ant
+
+bata result = test()
+likha result
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], 42)
+
+    def test_return_value_in_expression(self):
+        source = """
+kaam jod(a, b)
+    laut a + b
+ant
+
+bata result = jod(10, 20) * 2
+likha result
+"""
+        interpreter = run_bhojlang(source)
+        self.assertEqual(interpreter.variables["result"], 60)
+
     def test_function_wrong_argument_count(self):
         source = """
 kaam greet(naam)

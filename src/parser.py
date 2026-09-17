@@ -77,6 +77,14 @@ class PrintNode:
         return f"PrintNode({self.value!r})"
 
 
+class LautNode:
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f"LautNode({self.value!r})"
+
+
 class IfNode:
     def __init__(self, condition, body, else_body=None):
         self.condition = condition
@@ -204,6 +212,9 @@ class Parser:
         if token.type == "KAAM":
             return self.parse_function()
 
+        if token.type == "LAUT":
+            return self.parse_laut()
+
         if token.type == "IDENTIFIER":
             if (
                 self.position + 1 < len(self.tokens)
@@ -216,6 +227,11 @@ class Parser:
         raise SyntaxError(
             f"Anjaan statement: {token.type}"
         )
+
+    def parse_laut(self):
+        self.expect("LAUT")
+        value = self.parse_expression()
+        return LautNode(value)
 
     def parse_variable_declaration(self):
         self.expect("BATA")
@@ -521,9 +537,19 @@ class Parser:
 
             if self.current().type == "LPAREN":
                 self.advance()
+
+                arguments = []
+
+                if self.current().type != "RPAREN":
+                    arguments.append(self.parse_expression())
+
+                    while self.current().type == "COMMA":
+                        self.advance()
+                        arguments.append(self.parse_expression())
+
                 self.expect("RPAREN")
 
-                return CallNode(token.value)
+                return CallNode(token.value, arguments)
 
             return VariableNode(token.value)
 

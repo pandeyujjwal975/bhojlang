@@ -7,12 +7,18 @@ from src.parser import (
     VariableDeclarationNode,
     AssignmentNode,
     PrintNode,
+    LautNode,
     IfNode,
     DohravNode,
     JabtakNode,
     FunctionNode,
     CallNode,
 )
+
+
+class ReturnSignal(Exception):
+    def __init__(self, value):
+        self.value = value
 
 
 class Interpreter:
@@ -66,10 +72,15 @@ class Interpreter:
             try:
                 for statement in function.body:
                     self.execute(statement)
+            except ReturnSignal as signal:
+                return signal.value
             finally:
                 self.variables = old_variables
 
             return
+
+        if isinstance(node, LautNode):
+            raise ReturnSignal(self.evaluate(node.value))
 
         if isinstance(node, VariableDeclarationNode):
             value = self.evaluate(node.value)
@@ -150,6 +161,9 @@ class Interpreter:
                 )
 
             return self.variables[node.name]
+
+        if isinstance(node, CallNode):
+            return self.execute(node)
 
         if isinstance(node, BinaryNode):
             return self.evaluate_binary(node)

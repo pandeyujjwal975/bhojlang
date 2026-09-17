@@ -24,6 +24,7 @@ class Lexer:
         "na": "NA",
         "ant": "ANT",
         "kaam": "KAAM",
+        "laut": "LAUT",
     }
 
     OPERATORS = {
