@@ -1,0 +1,60 @@
+# =====================================
+# BhojLang Final Integration Test
+# =====================================
+
+# Variables
+bata naam = "Ujjwal"
+bata umar = 20
+bata marks = 82
+
+likha naam
+likha umar
+likha marks
+
+# Arithmetic
+bata total = 20 + 10
+likha total
+
+# Comparison + agar
+agar umar >= 18
+    likha "Adult"
+nahi
+    likha "Minor"
+ant
+
+# Multiple warna agar
+agar marks >= 90
+    likha "Grade A"
+warna agar marks >= 75
+    likha "Grade B"
+warna agar marks >= 60
+    likha "Grade C"
+nahi
+    likha "Fail"
+ant
+
+# Logical aur
+bata student = 1
+
+agar umar >= 18 aur student == 1
+    likha "Eligible"
+ant
+
+# Logical ya
+agar umar < 18 ya student == 1
+    likha "Condition True"
+ant
+
+# Nested agar
+agar umar >= 18
+    agar student == 1
+        likha "Nested Success"
+    nahi
+        likha "Nested Failed"
+    ant
+nahi
+    likha "Minor Student"
+ant
+
+# Comments test complete
+likha "FINAL TEST COMPLETE"

@@ -194,6 +194,10 @@ class Interpreter:
         )
 
     def evaluate_binary(self, node):
+        # Logical NOT
+        if node.operator == "na":
+            return not bool(self.evaluate(node.right))
+
         left = self.evaluate(node.left)
         right = self.evaluate(node.right)
 

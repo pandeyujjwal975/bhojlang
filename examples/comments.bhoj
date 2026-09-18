@@ -1,0 +1,10 @@
+# BhojLang comment
+bata umar = 20
+
+# Check age
+agar umar >= 18
+    # Adult message
+    likha "Adult"
+ant
+
+# Test complete

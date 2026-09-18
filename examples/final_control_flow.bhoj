@@ -1,0 +1,19 @@
+bata umar = 20
+bata marks = 82
+bata student = 1
+
+agar umar >= 18 aur student == 1
+    agar marks >= 90
+        likha "Adult - Grade A"
+    warna agar marks >= 75
+        likha "Adult - Grade B"
+    warna agar marks >= 60
+        likha "Adult - Grade C"
+    nahi
+        likha "Adult - Fail"
+    ant
+warna agar umar >= 13 ya student == 1
+    likha "Teenager/Student"
+nahi
+    likha "Child"
+ant

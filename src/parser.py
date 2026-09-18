@@ -571,6 +571,15 @@ class Parser:
             self.advance()
             return BooleanNode(False)
 
+        if token.type == "NA":
+            self.advance()
+            value = self.parse_primary()
+            return BinaryNode(
+                BooleanNode(True),
+                "na",
+                value
+            )
+
         if token.type == "IDENTIFIER":
             self.advance()
 

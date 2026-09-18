@@ -1,0 +1,99 @@
+
+likha "=== BhojLang Full Test ==="
+
+
+bata naam = "Ujjwal"
+bata umar = 20
+bata marks = 82
+
+likha naam
+likha umar
+likha marks
+
+
+bata a = 10
+bata b = 5
+
+likha a + b
+likha a - b
+likha a * b
+likha a / b
+
+
+agar marks >= 90
+    likha "Grade A+"
+warna agar marks >= 75
+    likha "Grade B"
+warna agar marks >= 60
+    likha "Grade C"
+nahi
+    likha "Fail"
+ant
+
+
+agar umar >= 18 aur marks >= 75
+    likha "Adult and Passed"
+ant
+
+
+agar umar < 18 ya marks >= 80
+    likha "OR condition true"
+ant
+
+
+agar na umar < 18
+    likha "NOT condition true"
+ant
+
+
+agar umar >= 18
+    bata student = 1
+
+    agar student == 1
+        likha "Adult Student"
+    nahi
+        likha "Adult"
+    ant
+nahi
+    likha "Minor"
+ant
+
+
+dohrav 3
+    likha "Dohrav working"
+ant
+
+
+bata count = 1
+
+jabtak count <= 3
+    likha count
+    count = count + 1
+ant
+
+
+kaam greet(name)
+    likha name
+ant
+
+greet("Ram")
+
+
+kaam add(x, y)
+    laut x + y
+ant
+
+bata result = add(10, 20)
+likha result
+
+
+kaam test_scope(value)
+    bata inside = value + 10
+    laut inside
+ant
+
+bata scoped_result = test_scope(5)
+likha scoped_result
+
+
+likha "=== BhojLang Test Complete ==="

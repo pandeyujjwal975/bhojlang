@@ -59,6 +59,15 @@ class Lexer:
         while self.position < len(self.text):
             char = self.text[self.position]
 
+            # BhojLang single-line comment
+            if char == "#":
+                while (
+                    self.position < len(self.text)
+                    and self.text[self.position] != "\n"
+                ):
+                    self.position += 1
+                continue
+
             if char == "\n":
                 tokens.append(Token(
                     "NEWLINE",
