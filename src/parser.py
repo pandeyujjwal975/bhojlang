@@ -271,71 +271,65 @@ class Parser:
 
         condition = self.parse_expression()
 
-        # Block syntax:
-        # agar condition
-        #     statement
-        # ant
-        if self.current().type == "NEWLINE":
+        self.expect("NEWLINE")
+        self.skip_newlines()
+
+        body = []
+
+        while self.current().type not in (
+            "WARNA", "NAHI", "ANT", "EOF"
+        ):
+            body.append(self.parse_statement())
+            self.skip_newlines()
+
+        # Start with the first if
+        branches = IfNode(condition, body, None)
+
+        # Handle multiple "warna agar"
+        current_branch = branches
+
+        while self.current().type == "WARNA":
+            self.advance()
+
+            self.expect("AGAR")
+            next_condition = self.parse_expression()
+
+            self.expect("NEWLINE")
+            self.skip_newlines()
+
+            next_body = []
+
+            while self.current().type not in (
+                "WARNA", "NAHI", "ANT", "EOF"
+            ):
+                next_body.append(self.parse_statement())
+                self.skip_newlines()
+
+            next_branch = IfNode(
+                next_condition,
+                next_body,
+                None
+            )
+
+            current_branch.else_body = [next_branch]
+            current_branch = next_branch
+
+        # Final "nahi" block
+        if self.current().type == "NAHI":
             self.advance()
             self.skip_newlines()
 
-            body = []
+            else_body = []
 
             while self.current().type not in ("ANT", "EOF"):
-                body.append(self.parse_statement())
+                else_body.append(self.parse_statement())
                 self.skip_newlines()
 
-            self.expect("ANT")
+            current_branch.else_body = else_body
 
-            else_body = None
+        self.expect("ANT")
 
-            if self.current().type == "NAHI":
-                self.advance()
-                self.skip_newlines()
-
-                if self.current().type == "NEWLINE":
-                    self.advance()
-                    self.skip_newlines()
-
-                else_body = []
-
-                while self.current().type not in ("ANT", "EOF"):
-                    else_body.append(self.parse_statement())
-                    self.skip_newlines()
-
-                self.expect("ANT")
-
-            return IfNode(
-                condition,
-                body,
-                else_body
-            )
-
-        # Existing one-line syntax:
-        # agar condition likha expression
-        # nahi likha expression
-        self.expect("LIKHA")
-
-        body = PrintNode(
-            self.parse_expression()
-        )
-
-        else_body = None
-
-        if self.current().type == "NAHI":
-            self.advance()
-
-            self.expect("LIKHA")
-
-            else_body = PrintNode(
-                self.parse_expression()
-            )
-
-        return IfNode(
-            condition,
-            body,
-            else_body
-        )
+        return branches
 
     def parse_dohrav(self):
         self.expect("DOHRAV")

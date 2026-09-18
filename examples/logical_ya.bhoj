@@ -1,0 +1,6 @@
+bata umar = 16
+bata student = 1
+
+agar umar >= 18 ya student == 1
+    likha "Condition True"
+ant

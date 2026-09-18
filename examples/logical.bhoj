@@ -1,0 +1,6 @@
+bata umar = 20
+bata student = 0
+
+agar umar >= 18 aur student == 1
+    likha "Eligible"
+ant

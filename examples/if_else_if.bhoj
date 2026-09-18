@@ -1,0 +1,8 @@
+likha umar = 15
+
+agar umar >= 18:
+    bol "Adult"
+warna agar umar >= 13:
+    bol "Teenager"
+nahi:
+    bol "Child"

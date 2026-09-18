@@ -1,0 +1,13 @@
+bata umar = 20
+
+agar umar >= 18
+    bata student = 1
+
+    agar student == 1
+        likha "Adult Student"
+    nahi
+        likha "Adult"
+    ant
+nahi
+    likha "Minor"
+ant

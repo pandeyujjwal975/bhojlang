@@ -15,6 +15,7 @@ class Lexer:
         "bata": "BATA",
         "agar": "AGAR",
         "nahi": "NAHI",
+        "warna": "WARNA",
         "dohrav": "DOHRAV",
         "jabtak": "JABTAK",
         "sach": "SACH",

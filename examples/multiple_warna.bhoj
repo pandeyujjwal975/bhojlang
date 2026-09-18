@@ -1,0 +1,11 @@
+bata marks = 40
+
+agar marks >= 90
+    likha "A"
+warna agar marks >= 75
+    likha "B"
+warna agar marks >= 60
+    likha "C"
+nahi
+    likha "Fail"
+ant

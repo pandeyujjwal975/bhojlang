@@ -1,5 +1,6 @@
-bata umar = 20
-agar umar >= 18
+bata age = 15
+
+agar age >= 18
     likha "Adult"
 nahi
     likha "Minor"

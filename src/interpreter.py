@@ -214,6 +214,12 @@ class Interpreter:
 
         if node.operator == "<=":
             return left <= right
+        if node.operator == "aur":
+            return bool(left) and bool(right)
+
+        if node.operator == "ya":
+            return bool(left) or bool(right)
+
 
         if not isinstance(left, (int, float)):
             raise RuntimeError(

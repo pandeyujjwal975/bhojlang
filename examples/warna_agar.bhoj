@@ -1,0 +1,9 @@
+bata umar = 10
+
+agar umar >= 18
+    likha "Adult"
+warna agar umar >= 13
+    likha "Teenager"
+nahi
+    likha "Child"
+ant
