@@ -1,0 +1,81 @@
+{
+  "BhojLang Variable": {
+    "prefix": "bata",
+    "body": [
+      "bata ${1:naam} = ${2:value}"
+    ],
+    "description": "Create a BhojLang variable"
+  },
+
+  "BhojLang Print": {
+    "prefix": "likha",
+    "body": [
+      "likha ${1:\"Hello BhojLang!\"}"
+    ],
+    "description": "Print output"
+  },
+
+  "BhojLang If Block": {
+    "prefix": "agar",
+    "body": [
+      "agar ${1:condition}",
+      "    ${2:likha \"Hello\"}",
+      "ant"
+    ],
+    "description": "BhojLang if block"
+  },
+
+  "BhojLang If Else": {
+    "prefix": "agar-nahi",
+    "body": [
+      "agar ${1:condition}",
+      "    ${2:likha \"Adult\"}",
+      "nahi",
+      "    ${3:likha \"Minor\"}",
+      "ant"
+    ],
+    "description": "BhojLang if-else block"
+  },
+
+  "BhojLang Warna Agar": {
+    "prefix": "warna-agar",
+    "body": [
+      "agar ${1:condition}",
+      "    ${2:likha \"A\"}",
+      "warna agar ${3:condition}",
+      "    ${4:likha \"B\"}",
+      "nahi",
+      "    ${5:likha \"Fail\"}",
+      "ant"
+    ],
+    "description": "BhojLang if-else-if-else block"
+  },
+
+  "BhojLang While": {
+    "prefix": "jabtak",
+    "body": [
+      "jabtak ${1:condition}",
+      "    ${2:likha \"Loop\"}",
+      "ant"
+    ],
+    "description": "BhojLang jabtak loop"
+  },
+
+  "BhojLang Repeat": {
+    "prefix": "dohrav",
+    "body": [
+      "dohrav ${1:5}",
+      "    ${2:likha \"Ram Ram\"}",
+      "ant"
+    ],
+    "description": "BhojLang repeat loop"
+  },
+
+  "BhojLang Comment": {
+    "prefix": "comment",
+    "body": [
+      "# ${1:comment}"
+    ],
+    "description": "BhojLang comment"
+  }
+}

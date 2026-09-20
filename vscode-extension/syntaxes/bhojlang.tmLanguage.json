@@ -1,0 +1,82 @@
+{
+  "name": "BhojLang",
+  "scopeName": "source.bhojlang",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#logical" },
+    { "include": "#booleans" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.bhojlang",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.bhojlang",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.bhojlang",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.bhojlang",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.bhojlang",
+          "match": "\\b(agar|warna|nahi|jabtak|dohrav|ant)\\b"
+        },
+        {
+          "name": "keyword.other.bhojlang",
+          "match": "\\b(bata|likha|bol)\\b"
+        }
+      ]
+    },
+    "logical": {
+      "patterns": [
+        {
+          "name": "keyword.operator.logical.bhojlang",
+          "match": "\\b(aur|ya)\\b"
+        }
+      ]
+    },
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.bhojlang",
+          "match": "\\b(sach|jhooth)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.bhojlang",
+          "match": "==|!=|<=|>=|<|>|\\+|-|\\*|/|%|="
+        }
+      ]
+    }
+  }
+}

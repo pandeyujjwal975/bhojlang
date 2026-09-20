@@ -1,0 +1,55 @@
+{
+  "name": "bhojlang",
+  "displayName": "BhojLang",
+  "description": "BhojLang programming language support for Visual Studio Code",
+  "version": "0.1.6",
+  "publisher": "pandeyujjwal975",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "bhojlang",
+        "aliases": [
+          "BhojLang",
+          "bhoj"
+        ],
+        "extensions": [
+          ".bhoj"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "bhojlang",
+        "scopeName": "source.bhojlang",
+        "path": "./syntaxes/bhojlang.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "bhojlang.runFile",
+        "title": "BhojLang: Run File"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "bhojlang",
+        "path": "./snippets/bhojlang.json"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pandeyujjwal975/bhojlang.git"
+  },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:bhojlang"
+  ]
+}

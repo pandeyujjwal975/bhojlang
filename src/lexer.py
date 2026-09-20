@@ -1,7 +1,9 @@
 class Token:
-    def __init__(self, type_, value=None):
+    def __init__(self, type_, value=None, line=1, column=1):
         self.type = type_
         self.value = value
+        self.line = line
+        self.column = column
 
     def __repr__(self):
         if self.value is not None:
@@ -48,6 +50,8 @@ class Lexer:
     def __init__(self, text):
         self.text = text
         self.position = 0
+        self.line = 1
+        self.column = 1
 
     def tokenize(self):
         tokens = []
@@ -56,12 +60,19 @@ class Lexer:
             char = self.text[self.position]
 
             if char == "\n":
-                tokens.append(Token("NEWLINE"))
+                tokens.append(Token(
+                    "NEWLINE",
+                    line=self.line,
+                    column=self.column
+                ))
                 self.position += 1
+                self.line += 1
+                self.column = 1
                 continue
 
             if char in " \t\r":
                 self.position += 1
+                self.column += 1
                 continue
 
             if char == '"':
@@ -84,27 +95,37 @@ class Lexer:
                 tokens.append(
                     Token(
                         self.OPERATORS[two_char],
-                        two_char
+                        two_char,
+                        self.line,
+                        self.column
                     )
                 )
                 self.position += 2
+                self.column += 2
                 continue
 
             if char in self.OPERATORS:
                 tokens.append(
                     Token(
                         self.OPERATORS[char],
-                        char
+                        char,
+                        self.line,
+                        self.column
                     )
                 )
                 self.position += 1
+                self.column += 1
                 continue
 
             raise SyntaxError(
                 f"Anjaan character: {char!r}"
             )
 
-        tokens.append(Token("EOF"))
+        tokens.append(Token(
+            "EOF",
+            line=self.line,
+            column=self.column
+        ))
 
         return tokens
 
@@ -126,8 +147,14 @@ class Lexer:
         value = self.text[start:self.position]
 
         self.position += 1
+        self.column += (self.position - start) + 1
 
-        return Token("STRING", value)
+        return Token(
+            "STRING",
+            value,
+            self.line,
+            self.column - ((self.position - start) + 1)
+        )
 
     def read_number(self):
         start = self.position
@@ -140,9 +167,14 @@ class Lexer:
 
         value = self.text[start:self.position]
 
+        column = self.column
+        self.column += self.position - start
+
         return Token(
             "NUMBER",
-            int(value)
+            int(value),
+            self.line,
+            column
         )
 
     def read_word(self):
@@ -164,7 +196,12 @@ class Lexer:
             "IDENTIFIER"
         )
 
+        column = self.column
+        self.column += self.position - start
+
         return Token(
             token_type,
-            word
+            word,
+            self.line,
+            column
         )

@@ -166,13 +166,12 @@ class Parser:
 
     def expect(self, token_type):
         token = self.current()
-
         if token.type != token_type:
             raise SyntaxError(
+                f"Line {token.line}, column {token.column}: "
                 f"Umeed {token_type} rahal, "
                 f"lekin {token.type} milal."
             )
-
         self.advance()
         return token
 
@@ -225,6 +224,7 @@ class Parser:
             return self.parse_assignment()
 
         raise SyntaxError(
+            f"Line {token.line}, column {token.column}: "
             f"Anjaan statement: {token.type}"
         )
 
@@ -358,6 +358,7 @@ class Parser:
         while self.current().type != "ANT":
             if self.current().type == "EOF":
                 raise SyntaxError(
+                    f"Line {self.current().line}, column {self.current().column}: "
                     "dohrav ke block ke ant mein 'ant' chahi."
                 )
 
@@ -420,6 +421,7 @@ class Parser:
         while self.current().type != "ANT":
             if self.current().type == "EOF":
                 raise SyntaxError(
+                    f"Line {self.current().line}, column {self.current().column}: "
                     "kaam ke block ke ant mein 'ant' chahi."
                 )
 
@@ -591,5 +593,6 @@ class Parser:
             return VariableNode(token.value)
 
         raise SyntaxError(
+            f"Line {token.line}, column {token.column}: "
             f"Anjaan expression: {token.type}"
         )

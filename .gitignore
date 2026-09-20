@@ -1,3 +1,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# VS Code extension build files
+*.vsix
+vscode-extension/node_modules/
