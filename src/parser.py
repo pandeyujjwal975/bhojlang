@@ -271,6 +271,20 @@ class Parser:
 
         condition = self.parse_expression()
 
+        # Single-line if:
+        # agar 10 > 5 likha "Adult"
+        if self.current().type not in ("NEWLINE", "EOF"):
+            body = [self.parse_statement()]
+            branches = IfNode(condition, body, None)
+
+            # Single-line nahi:
+            # agar 10 > 5 likha "Adult" nahi likha "Minor"
+            if self.current().type == "NAHI":
+                self.advance()
+                branches.else_body = [self.parse_statement()]
+
+            return branches
+
         self.expect("NEWLINE")
         self.skip_newlines()
 
@@ -282,15 +296,11 @@ class Parser:
             body.append(self.parse_statement())
             self.skip_newlines()
 
-        # Start with the first if
         branches = IfNode(condition, body, None)
-
-        # Handle multiple "warna agar"
         current_branch = branches
 
         while self.current().type == "WARNA":
             self.advance()
-
             self.expect("AGAR")
             next_condition = self.parse_expression()
 
@@ -314,7 +324,6 @@ class Parser:
             current_branch.else_body = [next_branch]
             current_branch = next_branch
 
-        # Final "nahi" block
         if self.current().type == "NAHI":
             self.advance()
             self.skip_newlines()
