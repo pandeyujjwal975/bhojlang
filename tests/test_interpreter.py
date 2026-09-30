@@ -710,6 +710,46 @@ likha nums[3]
             run_bhojlang(source)
 
 
+    def test_list_index_assignment(self):
+        source = """
+bata nums = [10, 20, 30]
+nums[1] = 50
+"""
+
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10, 50, 30]
+        )
+
+
+    def test_list_index_assignment_out_of_range(self):
+        source = """
+bata nums = [10, 20, 30]
+nums[3] = 50
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "List index 3 range se bahar ba."
+        ):
+            run_bhojlang(source)
+
+
+    def test_list_index_assignment_requires_integer(self):
+        source = """
+bata nums = [10, 20, 30]
+nums["one"] = 50
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "List index integer hona chahi."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0

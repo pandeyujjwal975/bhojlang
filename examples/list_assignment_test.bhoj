@@ -1,0 +1,7 @@
+bata nums = [10, 20, 30]
+
+nums[1] = 50
+
+likha nums[0]
+likha nums[1]
+likha nums[2]

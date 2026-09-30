@@ -15,6 +15,7 @@ from src.parser import (
     CallNode,
     ListNode,
     IndexNode,
+    IndexAssignmentNode,
 )
 
 
@@ -95,6 +96,29 @@ class Interpreter:
 
         if isinstance(node, LautNode):
             raise ReturnSignal(self.evaluate(node.value))
+
+        if isinstance(node, IndexAssignmentNode):
+            collection = self.evaluate(node.target.collection)
+            index = self.evaluate(node.target.index)
+            value = self.evaluate(node.value)
+
+            if not isinstance(index, int):
+                raise RuntimeError(
+                    "List index integer hona chahi."
+                )
+
+            if not isinstance(collection, list):
+                raise RuntimeError(
+                    "Index assignment sirf list par use kar sakat bani."
+                )
+
+            if index < 0 or index >= len(collection):
+                raise RuntimeError(
+                    f"List index {index} range se bahar ba."
+                )
+
+            collection[index] = value
+            return
 
         if isinstance(node, VariableDeclarationNode):
             value = self.evaluate(node.value)

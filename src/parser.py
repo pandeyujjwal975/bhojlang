@@ -167,6 +167,18 @@ class IndexNode:
             f"{self.index!r})"
         )
 
+class IndexAssignmentNode:
+    def __init__(self, target, value):
+        self.target = target
+        self.value = value
+
+    def __repr__(self):
+        return (
+            f"IndexAssignmentNode("
+            f"{self.target!r}, "
+            f"{self.value!r})"
+        )
+
 
 class Parser:
     def __init__(self, tokens):
@@ -270,12 +282,26 @@ class Parser:
     def parse_assignment(self):
         name = self.expect("IDENTIFIER").value
 
+        target = VariableNode(name)
+
+        while self.current().type == "LBRACKET":
+            self.advance()
+            index = self.parse_expression()
+            self.expect("RBRACKET")
+            target = IndexNode(target, index)
+
         self.expect("EQUALS")
 
         value = self.parse_expression()
 
-        return AssignmentNode(
-            name,
+        if isinstance(target, VariableNode):
+            return AssignmentNode(
+                target.name,
+                value
+            )
+
+        return IndexAssignmentNode(
+            target,
             value
         )
 
