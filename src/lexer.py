@@ -44,6 +44,8 @@ class Lexer:
         "<=": "LESS_EQUAL",
         "(": "LPAREN",
         ")": "RPAREN",
+        "[": "LBRACKET",
+        "]": "RBRACKET",
         ",": "COMMA",
     }
 

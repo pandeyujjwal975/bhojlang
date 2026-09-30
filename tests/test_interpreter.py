@@ -670,6 +670,46 @@ greet()
             run_bhojlang(source)
 
 
+    def test_list_literal(self):
+        source = """
+bata nums = [10, 20, 30]
+"""
+
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10, 20, 30]
+        )
+
+
+    def test_list_indexing(self):
+        source = """
+bata nums = [10, 20, 30]
+bata result = nums[1]
+"""
+
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["result"],
+            20
+        )
+
+
+    def test_list_index_out_of_range(self):
+        source = """
+bata nums = [10, 20, 30]
+likha nums[3]
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "List index 3 range se bahar ba."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0

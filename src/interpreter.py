@@ -13,6 +13,8 @@ from src.parser import (
     JabtakNode,
     FunctionNode,
     CallNode,
+    ListNode,
+    IndexNode,
 )
 
 
@@ -173,6 +175,33 @@ class Interpreter:
 
         if isinstance(node, BooleanNode):
             return node.value
+
+        if isinstance(node, ListNode):
+            return [
+                self.evaluate(element)
+                for element in node.elements
+            ]
+
+        if isinstance(node, IndexNode):
+            collection = self.evaluate(node.collection)
+            index = self.evaluate(node.index)
+
+            if not isinstance(index, int):
+                raise RuntimeError(
+                    "List index integer hona chahi."
+                )
+
+            if not isinstance(collection, list):
+                raise RuntimeError(
+                    "Index sirf list par use kar sakat bani."
+                )
+
+            if index < 0 or index >= len(collection):
+                raise RuntimeError(
+                    f"List index {index} range se bahar ba."
+                )
+
+            return collection[index]
 
         if isinstance(node, VariableNode):
             if node.name not in self.variables:

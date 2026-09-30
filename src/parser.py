@@ -147,6 +147,26 @@ class CallNode:
             f")"
         )
 
+class ListNode:
+    def __init__(self, elements):
+        self.elements = elements
+
+    def __repr__(self):
+        return f"ListNode({self.elements!r})"
+
+
+class IndexNode:
+    def __init__(self, collection, index):
+        self.collection = collection
+        self.index = index
+
+    def __repr__(self):
+        return (
+            f"IndexNode("
+            f"{self.collection!r}, "
+            f"{self.index!r})"
+        )
+
 
 class Parser:
     def __init__(self, tokens):
@@ -566,30 +586,47 @@ class Parser:
 
         if token.type == "NUMBER":
             self.advance()
-            return NumberNode(token.value)
+            node = NumberNode(token.value)
 
-        if token.type == "STRING":
+        elif token.type == "STRING":
             self.advance()
-            return StringNode(token.value)
+            node = StringNode(token.value)
 
-        if token.type == "SACH":
+        elif token.type == "SACH":
             self.advance()
-            return BooleanNode(True)
+            node = BooleanNode(True)
 
-        if token.type == "JHOOTH":
+        elif token.type == "JHOOTH":
             self.advance()
-            return BooleanNode(False)
+            node = BooleanNode(False)
 
-        if token.type == "NA":
+        elif token.type == "NA":
             self.advance()
             value = self.parse_primary()
-            return BinaryNode(
+            node = BinaryNode(
                 BooleanNode(True),
                 "na",
                 value
             )
 
-        if token.type == "IDENTIFIER":
+        elif token.type == "LBRACKET":
+            self.advance()
+
+            elements = []
+
+            if self.current().type != "RBRACKET":
+                while True:
+                    elements.append(self.parse_expression())
+
+                    if self.current().type != "COMMA":
+                        break
+
+                    self.advance()
+
+            self.expect("RBRACKET")
+            node = ListNode(elements)
+
+        elif token.type == "IDENTIFIER":
             self.advance()
 
             if self.current().type == "LPAREN":
@@ -606,9 +643,24 @@ class Parser:
 
                 self.expect("RPAREN")
 
-                return CallNode(token.value, arguments)
+                node = CallNode(token.value, arguments)
+            else:
+                node = VariableNode(token.value)
 
-            return VariableNode(token.value)
+        else:
+            raise SyntaxError(
+                f"Line {token.line}, column {token.column}: "
+                f"Anjaan expression: {token.type}"
+            )
+
+        # Indexing: nums[0], nums[1], ...
+        while self.current().type == "LBRACKET":
+            self.advance()
+            index = self.parse_expression()
+            self.expect("RBRACKET")
+            node = IndexNode(node, index)
+
+        return node
 
         raise SyntaxError(
             f"Line {token.line}, column {token.column}: "
