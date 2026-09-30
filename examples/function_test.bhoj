@@ -1,0 +1,5 @@
+kaam jod(a, b)
+    laut a + b
+ant
+
+jod(10)

@@ -1,0 +1,5 @@
+bata n = 5
+
+dohrav n
+    likha "Hello"
+ant

@@ -2,13 +2,21 @@
   "name": "BhojLang",
   "scopeName": "source.bhojlang",
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#keywords" },
-    { "include": "#logical" },
-    { "include": "#booleans" },
-    { "include": "#operators" }
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#numbers"
+    }
   ],
   "repository": {
     "comments": {
@@ -34,39 +42,31 @@
         }
       ]
     },
-    "numbers": {
-      "patterns": [
-        {
-          "name": "constant.numeric.bhojlang",
-          "match": "\\b\\d+(\\.\\d+)?\\b"
-        }
-      ]
-    },
     "keywords": {
       "patterns": [
         {
           "name": "keyword.control.bhojlang",
-          "match": "\\b(agar|warna|nahi|jabtak|dohrav|ant)\\b"
+          "match": "\\b(agar|warna|nahi|ant|dohrav|jabtak|kaam|laut)\\b"
         },
         {
-          "name": "keyword.other.bhojlang",
-          "match": "\\b(bata|likha|bol)\\b"
-        }
-      ]
-    },
-    "logical": {
-      "patterns": [
+          "name": "keyword.declaration.bhojlang",
+          "match": "\\b(bata)\\b"
+        },
+        {
+          "name": "support.function.bhojlang",
+          "match": "\\b(likha)\\b"
+        },
+        {
+          "name": "constant.language.bhojlang",
+          "match": "\\b(sach|jhooth)\\b"
+        },
         {
           "name": "keyword.operator.logical.bhojlang",
-          "match": "\\b(aur|ya)\\b"
-        }
-      ]
-    },
-    "booleans": {
-      "patterns": [
+          "match": "\\b(aur|ya|na)\\b"
+        },
         {
-          "name": "constant.language.boolean.bhojlang",
-          "match": "\\b(sach|jhooth)\\b"
+          "name": "entity.name.function.bhojlang",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()"
         }
       ]
     },
@@ -74,7 +74,15 @@
       "patterns": [
         {
           "name": "keyword.operator.bhojlang",
-          "match": "==|!=|<=|>=|<|>|\\+|-|\\*|/|%|="
+          "match": "(==|!=|>=|<=|>|<|=|\\+|-|\\*|/)"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.bhojlang",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
         }
       ]
     }
