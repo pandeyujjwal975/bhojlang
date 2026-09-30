@@ -154,5 +154,18 @@ ant
         self.assertEqual(nodes[0].name, "greet")
 
 
+    def test_function_missing_ant(self):
+        source = """
+kaam test()
+    likha "hello"
+"""
+
+        with self.assertRaisesRegex(
+            SyntaxError,
+            "kaam ke block ke ant mein 'ant' chahi."
+        ):
+            self.parse(source)
+
+
 if __name__ == "__main__":
     unittest.main()
