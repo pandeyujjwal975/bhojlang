@@ -697,6 +697,20 @@ bata result = nums[1]
         )
 
 
+    def test_nested_list_indexing(self):
+        source = """
+bata nums = [[10, 20], [30, 40]]
+bata result = nums[1][0]
+"""
+
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["result"],
+            30
+        )
+
+
     def test_list_index_out_of_range(self):
         source = """
 bata nums = [10, 20, 30]
