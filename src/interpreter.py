@@ -30,11 +30,30 @@ class Interpreter:
         self.variables = {}
         self.scopes = [self.variables]
         self.functions = {}
+        self.builtins = {
+            "lambai": self.builtin_lambai,
+        }
 
         # Function declarations register karo.
         for node in self.nodes:
             if isinstance(node, FunctionNode):
                 self.functions[node.name] = node
+
+    def builtin_lambai(self, arguments):
+        if len(arguments) != 1:
+            raise RuntimeError(
+                f"Function 'lambai' ke 1 argument chahi, "
+                f"lekin {len(arguments)} milal."
+            )
+
+        value = arguments[0]
+
+        if not isinstance(value, (list, str)):
+            raise RuntimeError(
+                "lambai ke argument list ya string hona chahi."
+            )
+
+        return len(value)
 
     def push_scope(self):
         scope = {}
@@ -57,6 +76,13 @@ class Interpreter:
             return
 
         if isinstance(node, CallNode):
+            if node.name in self.builtins:
+                arguments = [
+                    self.evaluate(argument)
+                    for argument in node.arguments
+                ]
+                return self.builtins[node.name](arguments)
+
             if node.name not in self.functions:
                 raise RuntimeError(
                     f"Function {node.name!r} define nahi bhail ba."

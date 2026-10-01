@@ -764,6 +764,57 @@ nums["one"] = 50
             run_bhojlang(source)
 
 
+    def test_builtin_lambai_list(self):
+        source = """
+bata nums = [10, 20, 30]
+bata result = lambai(nums)
+"""
+
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["result"],
+            3
+        )
+
+
+    def test_builtin_lambai_string(self):
+        source = """
+bata result = lambai("BhojLang")
+"""
+
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["result"],
+            8
+        )
+
+
+    def test_builtin_lambai_wrong_argument_count(self):
+        source = """
+lambai()
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'lambai' ke 1 argument chahi, lekin 0 milal."
+        ):
+            run_bhojlang(source)
+
+
+    def test_builtin_lambai_invalid_type(self):
+        source = """
+bata result = lambai(123)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "lambai ke argument list ya string hona chahi."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0
