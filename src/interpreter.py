@@ -32,6 +32,7 @@ class Interpreter:
         self.functions = {}
         self.builtins = {
             "lambai": self.builtin_lambai,
+            "jodo": self.builtin_jodo,
         }
 
         # Function declarations register karo.
@@ -54,6 +55,24 @@ class Interpreter:
             )
 
         return len(value)
+
+    def builtin_jodo(self, arguments):
+        if len(arguments) != 2:
+            raise RuntimeError(
+                f"Function 'jodo' ke 2 argument chahi, "
+                f"lekin {len(arguments)} milal."
+            )
+
+        collection = arguments[0]
+        value = arguments[1]
+
+        if not isinstance(collection, list):
+            raise RuntimeError(
+                "jodo ke pahila argument list hona chahi."
+            )
+
+        collection.append(value)
+        return
 
     def push_scope(self):
         scope = {}

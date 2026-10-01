@@ -815,6 +815,58 @@ bata result = lambai(123)
             run_bhojlang(source)
 
 
+    def test_jodo_builtin(self):
+        source = """
+bata nums = [10, 20]
+jodo(nums, 30)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10, 20, 30]
+        )
+
+
+    def test_jodo_builtin_string(self):
+        source = """
+bata nums = [10]
+jodo(nums, "Ram")
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10, "Ram"]
+        )
+
+
+    def test_jodo_builtin_wrong_argument_count(self):
+        source = """
+bata nums = [10]
+jodo(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'jodo' ke 2 argument chahi, lekin 1 milal."
+        ):
+            run_bhojlang(source)
+
+
+    def test_jodo_builtin_requires_list(self):
+        source = """
+bata nums = 10
+jodo(nums, 20)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "jodo ke pahila argument list hona chahi."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0
