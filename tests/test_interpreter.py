@@ -1007,6 +1007,76 @@ pehla(nums)
             run_bhojlang(source)
 
 
+    def test_aakhri_builtin(self):
+        source = """
+bata nums = [10, 20, 30]
+bata item = aakhri(nums)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            30
+        )
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10, 20, 30]
+        )
+
+
+    def test_aakhri_builtin_string_item(self):
+        source = """
+bata nums = [10, "Ram"]
+bata item = aakhri(nums)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            "Ram"
+        )
+
+
+    def test_aakhri_builtin_wrong_argument_count(self):
+        source = """
+bata nums = [10]
+aakhri(nums, 20)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'aakhri' ke 1 argument chahi, lekin 2 milal."
+        ):
+            run_bhojlang(source)
+
+
+    def test_aakhri_builtin_requires_list(self):
+        source = """
+bata nums = 10
+aakhri(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "aakhri ke argument list hona chahi."
+        ):
+            run_bhojlang(source)
+
+
+    def test_aakhri_builtin_empty_list(self):
+        source = """
+bata nums = []
+aakhri(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Khali list mein aakhri element na ba."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0

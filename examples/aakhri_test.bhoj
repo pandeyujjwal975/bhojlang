@@ -1,0 +1,5 @@
+bata nums = [10, 20, 30]
+bata x = aakhri(nums)
+
+likha x
+likha nums[2]

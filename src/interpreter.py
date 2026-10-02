@@ -35,6 +35,7 @@ class Interpreter:
             "jodo": self.builtin_jodo,
             "nikalo": self.builtin_nikalo,
             "pehla": self.builtin_pehla,
+            "aakhri": self.builtin_aakhri,
         }
 
         # Function declarations register karo.
@@ -117,6 +118,27 @@ class Interpreter:
             )
 
         return collection[0]
+
+    def builtin_aakhri(self, arguments):
+        if len(arguments) != 1:
+            raise RuntimeError(
+                f"Function 'aakhri' ke 1 argument chahi, "
+                f"lekin {len(arguments)} milal."
+            )
+
+        collection = arguments[0]
+
+        if not isinstance(collection, list):
+            raise RuntimeError(
+                "aakhri ke argument list hona chahi."
+            )
+
+        if not collection:
+            raise RuntimeError(
+                "Khali list mein aakhri element na ba."
+            )
+
+        return collection[-1]
 
     def push_scope(self):
         scope = {}
