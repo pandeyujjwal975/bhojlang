@@ -1077,6 +1077,94 @@ aakhri(nums)
             run_bhojlang(source)
 
 
+    def test_mitao_builtin(self):
+        source = """
+bata nums = [10, 20, 30]
+bata item = mitao(nums, 1)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            20
+        )
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10, 30]
+        )
+
+
+    def test_mitao_builtin_first_element(self):
+        source = """
+bata nums = [10, 20, 30]
+bata item = mitao(nums, 0)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            10
+        )
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [20, 30]
+        )
+
+
+    def test_mitao_builtin_wrong_argument_count(self):
+        source = """
+bata nums = [10, 20]
+mitao(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'mitao' ke 2 argument chahi, lekin 1 milal."
+        ):
+            run_bhojlang(source)
+
+
+    def test_mitao_builtin_requires_list(self):
+        source = """
+bata nums = 10
+mitao(nums, 0)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "mitao ke pahila argument list hona chahi."
+        ):
+            run_bhojlang(source)
+
+
+    def test_mitao_builtin_requires_integer_index(self):
+        source = """
+bata nums = [10, 20]
+mitao(nums, "one")
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "mitao ke index integer hona chahi."
+        ):
+            run_bhojlang(source)
+
+
+    def test_mitao_builtin_index_out_of_range(self):
+        source = """
+bata nums = [10, 20]
+mitao(nums, 2)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "List index 2 range se bahar ba."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0

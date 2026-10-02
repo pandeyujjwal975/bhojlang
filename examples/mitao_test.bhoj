@@ -1,0 +1,5 @@
+bata nums = [10, 20, 30]
+bata item = mitao(nums, 1)
+
+likha item
+likha nums[1]

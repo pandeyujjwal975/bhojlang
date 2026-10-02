@@ -36,6 +36,7 @@ class Interpreter:
             "nikalo": self.builtin_nikalo,
             "pehla": self.builtin_pehla,
             "aakhri": self.builtin_aakhri,
+            "mitao": self.builtin_mitao,
         }
 
         # Function declarations register karo.
@@ -139,6 +140,33 @@ class Interpreter:
             )
 
         return collection[-1]
+
+    def builtin_mitao(self, arguments):
+        if len(arguments) != 2:
+            raise RuntimeError(
+                f"Function 'mitao' ke 2 argument chahi, "
+                f"lekin {len(arguments)} milal."
+            )
+
+        collection = arguments[0]
+        index = arguments[1]
+
+        if not isinstance(collection, list):
+            raise RuntimeError(
+                "mitao ke pahila argument list hona chahi."
+            )
+
+        if not isinstance(index, int):
+            raise RuntimeError(
+                "mitao ke index integer hona chahi."
+            )
+
+        if index < 0 or index >= len(collection):
+            raise RuntimeError(
+                f"List index {index} range se bahar ba."
+            )
+
+        return collection.pop(index)
 
     def push_scope(self):
         scope = {}
