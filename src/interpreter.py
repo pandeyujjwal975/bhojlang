@@ -33,6 +33,7 @@ class Interpreter:
         self.builtins = {
             "lambai": self.builtin_lambai,
             "jodo": self.builtin_jodo,
+            "jod": self.builtin_jod,
             "nikalo": self.builtin_nikalo,
             "pehla": self.builtin_pehla,
             "aakhri": self.builtin_aakhri,
@@ -168,6 +169,22 @@ class Interpreter:
 
         return collection.pop(index)
 
+    def builtin_jod(self, arguments):
+        if len(arguments) != 2:
+            raise RuntimeError(
+                f"Function 'jod' ke 2 argument chahi, "
+                f"lekin {len(arguments)} milal."
+            )
+
+        left, right = arguments
+
+        if not isinstance(left, str) or not isinstance(right, str):
+            raise RuntimeError(
+                "jod ke dono argument string hona chahi."
+            )
+
+        return left + right
+
     def push_scope(self):
         scope = {}
         self.scopes.append(scope)
@@ -189,6 +206,41 @@ class Interpreter:
             return
 
         if isinstance(node, CallNode):
+            # User-defined function ko builtin se priority do.
+            if node.name in self.functions:
+                function = self.functions[node.name]
+
+                if len(node.arguments) != len(function.parameters):
+                    raise RuntimeError(
+                        f"Function {node.name!r} ke "
+                        f"{len(function.parameters)} argument chahi, "
+                        f"lekin {len(node.arguments)} milal."
+                    )
+
+                arguments = [
+                    self.evaluate(argument)
+                    for argument in node.arguments
+                ]
+
+                self.push_scope()
+
+                for parameter, argument in zip(
+                    function.parameters,
+                    arguments
+                ):
+                    self.variables[parameter] = argument
+
+                try:
+                    for statement in function.body:
+                        self.execute(statement)
+                except ReturnSignal as signal:
+                    return signal.value
+                finally:
+                    self.pop_scope()
+
+                return
+
+            # User-defined function nahi hai, tab builtin check karo.
             if node.name in self.builtins:
                 arguments = [
                     self.evaluate(argument)
@@ -196,42 +248,9 @@ class Interpreter:
                 ]
                 return self.builtins[node.name](arguments)
 
-            if node.name not in self.functions:
-                raise RuntimeError(
-                    f"Function {node.name!r} define nahi bhail ba."
-                )
-
-            function = self.functions[node.name]
-
-            if len(node.arguments) != len(function.parameters):
-                raise RuntimeError(
-                    f"Function {node.name!r} ke "
-                    f"{len(function.parameters)} argument chahi, "
-                    f"lekin {len(node.arguments)} milal."
-                )
-
-            arguments = [
-                self.evaluate(argument)
-                for argument in node.arguments
-            ]
-
-            self.push_scope()
-
-            for parameter, argument in zip(
-                function.parameters,
-                arguments
-            ):
-                self.variables[parameter] = argument
-
-            try:
-                for statement in function.body:
-                    self.execute(statement)
-            except ReturnSignal as signal:
-                return signal.value
-            finally:
-                self.pop_scope()
-
-            return
+            raise RuntimeError(
+                f"Function {node.name!r} define nahi bhail ba."
+            )
 
         if isinstance(node, LautNode):
             raise ReturnSignal(self.evaluate(node.value))
@@ -328,7 +347,6 @@ class Interpreter:
             f"Ee AST node samajh mein na aail: "
             f"{type(node).__name__}"
         )
-
     def evaluate(self, node):
         if isinstance(node, NumberNode):
             return node.value

@@ -1165,6 +1165,55 @@ mitao(nums, 2)
             run_bhojlang(source)
 
 
+    def test_jod_builtin(self):
+        source = """
+bata naam = "Ujjwal"
+bata msg = jod("Ram ", naam)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["msg"],
+            "Ram Ujjwal"
+        )
+
+
+    def test_jod_builtin_empty_string(self):
+        source = """
+bata msg = jod("", "BhojLang")
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["msg"],
+            "BhojLang"
+        )
+
+
+    def test_jod_builtin_wrong_argument_count(self):
+        source = """
+jod("Ram")
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'jod' ke 2 argument chahi, lekin 1 milal."
+        ):
+            run_bhojlang(source)
+
+
+    def test_jod_builtin_requires_strings(self):
+        source = """
+jod("Ram ", 10)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "jod ke dono argument string hona chahi."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0

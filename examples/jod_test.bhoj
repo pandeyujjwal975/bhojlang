@@ -1,0 +1,4 @@
+bata naam = "Ujjwal"
+bata msg = jod("Ram ", naam)
+
+likha msg
