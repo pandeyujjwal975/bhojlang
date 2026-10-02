@@ -34,6 +34,7 @@ class Interpreter:
             "lambai": self.builtin_lambai,
             "jodo": self.builtin_jodo,
             "nikalo": self.builtin_nikalo,
+            "pehla": self.builtin_pehla,
         }
 
         # Function declarations register karo.
@@ -95,6 +96,27 @@ class Interpreter:
             )
 
         return collection.pop()
+
+    def builtin_pehla(self, arguments):
+        if len(arguments) != 1:
+            raise RuntimeError(
+                f"Function 'pehla' ke 1 argument chahi, "
+                f"lekin {len(arguments)} milal."
+            )
+
+        collection = arguments[0]
+
+        if not isinstance(collection, list):
+            raise RuntimeError(
+                "pehla ke argument list hona chahi."
+            )
+
+        if not collection:
+            raise RuntimeError(
+                "Khali list mein pehla element na ba."
+            )
+
+        return collection[0]
 
     def push_scope(self):
         scope = {}

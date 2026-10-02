@@ -942,6 +942,71 @@ nikalo(nums)
             run_bhojlang(source)
 
 
+    def test_pehla_builtin(self):
+        source = """
+bata nums = [10, 20, 30]
+bata item = pehla(nums)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            10
+        )
+
+
+    def test_pehla_builtin_string_item(self):
+        source = """
+bata nums = ["Ram", "Shyam"]
+bata item = pehla(nums)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            "Ram"
+        )
+
+
+    def test_pehla_builtin_wrong_argument_count(self):
+        source = """
+bata nums = [10]
+pehla(nums, 20)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'pehla' ke 1 argument chahi, lekin 2 milal."
+        ):
+            run_bhojlang(source)
+
+
+    def test_pehla_builtin_requires_list(self):
+        source = """
+bata nums = 10
+pehla(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "pehla ke argument list hona chahi."
+        ):
+            run_bhojlang(source)
+
+
+    def test_pehla_builtin_empty_list(self):
+        source = """
+bata nums = []
+pehla(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Khali list mein pehla element na ba."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0

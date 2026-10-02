@@ -1,0 +1,3 @@
+bata nums = [10, 20, 30]
+bata x = pehla(nums)
+likha x
