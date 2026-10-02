@@ -1,0 +1,5 @@
+bata nums = [10, 20, 30]
+bata item = nikalo(nums)
+
+likha item
+likha nums[1]

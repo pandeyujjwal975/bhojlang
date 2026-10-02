@@ -867,6 +867,81 @@ jodo(nums, 20)
             run_bhojlang(source)
 
 
+    def test_nikalo_builtin(self):
+        source = """
+bata nums = [10, 20, 30]
+bata item = nikalo(nums)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            30
+        )
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10, 20]
+        )
+
+
+    def test_nikalo_builtin_string_item(self):
+        source = """
+bata nums = [10, "Ram"]
+bata item = nikalo(nums)
+"""
+        interpreter = run_bhojlang(source)
+
+        self.assertEqual(
+            interpreter.variables["item"],
+            "Ram"
+        )
+
+        self.assertEqual(
+            interpreter.variables["nums"],
+            [10]
+        )
+
+
+    def test_nikalo_builtin_wrong_argument_count(self):
+        source = """
+bata nums = [10]
+nikalo(nums, 20)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Function 'nikalo' ke 1 argument chahi, lekin 2 milal."
+        ):
+            run_bhojlang(source)
+
+
+    def test_nikalo_builtin_requires_list(self):
+        source = """
+bata nums = 10
+nikalo(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "nikalo ke argument list hona chahi."
+        ):
+            run_bhojlang(source)
+
+
+    def test_nikalo_builtin_empty_list(self):
+        source = """
+bata nums = []
+nikalo(nums)
+"""
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Khali list se nikalo nahi kar sakat bani."
+        ):
+            run_bhojlang(source)
+
+
     def test_block_if(self):
         source = """
 bata result = 0

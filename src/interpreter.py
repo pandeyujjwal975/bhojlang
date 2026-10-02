@@ -33,6 +33,7 @@ class Interpreter:
         self.builtins = {
             "lambai": self.builtin_lambai,
             "jodo": self.builtin_jodo,
+            "nikalo": self.builtin_nikalo,
         }
 
         # Function declarations register karo.
@@ -73,6 +74,27 @@ class Interpreter:
 
         collection.append(value)
         return
+
+    def builtin_nikalo(self, arguments):
+        if len(arguments) != 1:
+            raise RuntimeError(
+                f"Function 'nikalo' ke 1 argument chahi, "
+                f"lekin {len(arguments)} milal."
+            )
+
+        collection = arguments[0]
+
+        if not isinstance(collection, list):
+            raise RuntimeError(
+                "nikalo ke argument list hona chahi."
+            )
+
+        if not collection:
+            raise RuntimeError(
+                "Khali list se nikalo nahi kar sakat bani."
+            )
+
+        return collection.pop()
 
     def push_scope(self):
         scope = {}
